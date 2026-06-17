@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+benchmarks/
+profiles/
+logs/
+data/
+results/
+tmp/
+config.yaml
+*.snakemake
+src/z_dna/dependencies/Z-GENIE/
+src/z_dna/dependencies/zhunt/
