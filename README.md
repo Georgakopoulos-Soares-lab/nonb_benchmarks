@@ -6,5 +6,7 @@ python=3.10
 how to reproduce:
 
 conda activate nonb-tools
+
 from top level directory
+
 sbatch src/z_dna/zseeker.sh

@@ -226,3 +226,4 @@ tmp/
 config.yaml
 *.snakemake
 src/z_dna/dependencies
+src/h_dna/dependencies

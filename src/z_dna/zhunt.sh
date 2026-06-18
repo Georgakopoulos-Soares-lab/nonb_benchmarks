@@ -25,3 +25,5 @@ grep -v '^>' "$FASTA" | tr -d '\n' > "$CLEAN_FASTA"
 
 /usr/bin/time -v -o "$BENCH" \
     "$ZHUNT" 12 6 12 "$CLEAN_FASTA"
+
+rm "$CLEAN_FASTA"

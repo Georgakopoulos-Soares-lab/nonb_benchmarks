@@ -13,8 +13,8 @@ set -euo pipefail
 
 RUN=${SLURM_ARRAY_TASK_ID}
 FASTA="data/chr18.fa"
-OUTDIR="results/zdna/zseeker/run_${RUN}"
-BENCH="benchmarks/zdna/zseeker/run_${RUN}.txt"
+OUTDIR="results/z_dna/zseeker/run_${RUN}"
+BENCH="benchmarks/z_dna/zseeker/run_${RUN}.txt"
 
 mkdir -p "$(dirname "$BENCH")"
 
