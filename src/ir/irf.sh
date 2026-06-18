@@ -13,7 +13,6 @@ set -euo pipefail
 
 RUN=${SLURM_ARRAY_TASK_ID}
 
-# Anchor everything to the submission directory and make paths absolute
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
 cd "$SUBMIT_DIR"
 
@@ -31,6 +30,10 @@ ulimit -c unlimited
 
 cd "$OUTDIR"
 /usr/bin/time -v -o "$BENCH" \
-    "$IRF" "$JOB_FASTA" 2 3 5 80 10 20 100000 1000000 -h -ngs
+    "$IRF" \
+    "$JOB_FASTA" \
+    2 3 5 80 10 20 100000 1000000 \
+    -h \
+    -d
 
 rm "$JOB_FASTA"

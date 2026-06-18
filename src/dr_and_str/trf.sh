@@ -13,9 +13,12 @@ set -euo pipefail
 
 RUN=${SLURM_ARRAY_TASK_ID}
 
-FASTA="data/chr18.fa"
-OUTDIR="results/dr_and_str/trf/run_${RUN}"
-BENCH="benchmarks/dr_and_str/trf/run_${RUN}.txt"
+SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$SUBMIT_DIR"
+
+FASTA="$(readlink -f data/chr18.fa)"
+OUTDIR="$(readlink -f -m results/dr_and_str/trf/run_${RUN})"
+BENCH="$(readlink -f -m benchmarks/dr_and_str/trf/run_${RUN}.txt)"
 TRF="src/dr_and_str/dependencies/TRF/build/src/trf"
 
 mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
@@ -26,6 +29,6 @@ cp "$FASTA" "$JOB_FASTA"
 ulimit -c unlimited
 
 /usr/bin/time -v -o "$BENCH" \
-    "$TRF" "$JOB_FASTA" 2 7 7 80 10 50 500 -f -d -m -h -ngs
+    "$TRF" "$JOB_FASTA" 2 7 7 80 10 50 500 -f -d -m -h
 
 rm "$JOB_FASTA"
