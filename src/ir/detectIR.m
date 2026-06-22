@@ -1,5 +1,6 @@
 clear;clc;
-addpath('./dependencies/detectIR');
+funcDir = getenv('IR_FUNCDIR');
+addpath(funcDir);
 
 %% Input.
 inputFile =  getenv('IR_INPUT');

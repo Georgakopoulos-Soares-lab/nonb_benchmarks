@@ -27,6 +27,7 @@ mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 JOB_FASTA="${OUTDIR}/clean_chr18.fa"
 cp "$FASTA" "$JOB_FASTA"
 
+export IR_FUNCDIR="$(readlink -f src/ir/dependencies/detectIR)"
 export IR_INPUT="$JOB_FASTA"
 export IR_PERF_OUT="$OUTDIR/perfect_repeats.fasta"
 export IR_PERF_RUN="$OUTDIR/perfect_repeats.runtime"

@@ -15,3 +15,8 @@ from https://sourceforge.net/projects/detectir/
 
 Create a MATLAB file detecting both perfect and imperfect repeats
 Define directory holding the functions and also define how to read variables from the command line
+
+matlabIR:
+from: https://academic.oup.com/bioinformatics/article/30/6/887/287234?login=false#393796017
+
+Supplementary material
