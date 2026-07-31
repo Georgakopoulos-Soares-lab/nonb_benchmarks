@@ -24,7 +24,7 @@ gcc -O2 -o bin/zhunt zhun3.c -lm
 ./bin/zhunt 12 6 12 /work2/10901/lefteris/stampede3/nonb_benchmarks/data/chr18.fa
 
 Z-DNABERT
-
+code from https://github.com/mitiau/Z-DNABERT/blob/main/ZDNA-prediction.ipynb
 pip install transformers biopython gdown
 
 gdown 1VAsp8I904y_J0PUhAQqpSlCn1IqfG0FB --output models/HG_chipseq/
