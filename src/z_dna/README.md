@@ -25,7 +25,8 @@ gcc -O2 -o bin/zhunt zhun3.c -lm
 
 Z-DNABERT
 code from https://github.com/mitiau/Z-DNABERT/blob/main/ZDNA-prediction.ipynb
-pip install transformers biopython gdown
+pip install transformers biopython gdown scipy
+pip install torch --index-url https://download.pytorch.org/whl/cu126
 
 gdown 1VAsp8I904y_J0PUhAQqpSlCn1IqfG0FB --output models/HG_chipseq/
 gdown 1dAeAt5Gu2cadwDhbc7OnenUgDLHlUvkx --output models/HG_kouzine/
@@ -35,4 +36,5 @@ gdown 1dXpQFmheClKXIEoqcZ7kgCwx6hzVCv3H --output models/MM_kouzine/
 gdown 10sF8Ywktd96HqAL0CwvlZZUUGj05CGk5 
 gdown 16bT7HDv71aRwyh3gBUbKwign1mtyLD2d
 gdown 1EE9goZ2JRSD8UTx501q71lGCk-CK3kqG
-gdown 1gZZdtAoDnDiLQqjQfGyuwt268Pe5sXW0 
+gdown 1gZZdtAoDnDiLQqjQfGyuwt268Pe5sXW0
+
