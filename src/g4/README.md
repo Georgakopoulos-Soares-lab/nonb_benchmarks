@@ -40,3 +40,8 @@ git clone https://github.com/hbusra/G4Boost.git
 cd G4Boost
 
 conda create -p g4boost -c conda-forge python=3.9 numpy=1.23 pandas=1.4.3 scikit-learn=1.0.2 py-xgboost=1.4.2
+
+G4detector
+
+git clone https://github.com/OrensteinLab/G4detector
+Keras 2.1.6 using Tensorflow backend
