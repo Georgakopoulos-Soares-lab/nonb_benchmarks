@@ -223,6 +223,7 @@ logs/
 data/
 results/
 tmp/
+tmp_results/
 config.yaml
 *.snakemake
 src/z_dna/dependencies

@@ -17,7 +17,9 @@ SUBMIT_DIR=$(pwd)
 FASTA="${SUBMIT_DIR}/data/chr18.fa"
 OUTDIR="${SUBMIT_DIR}/results/g4/g4boost/run_${RUN}"
 BENCH="${SUBMIT_DIR}/benchmarks/g4/g4boost/run_${RUN}.txt"
-G4BOOST="${SUBMIT_DIR}/src/g4/dependencies/G4Boost/G4Boost_v4.py"
+G4BOOST="${SUBMIT_DIR}/src/g4/dependencies/G4Boost/G4Boost.py"
+G4BOOST_CLASSIFIER="${SUBMIT_DIR}/src/g4/dependencies/G4Boost/G4Boost_classifier.json"
+G4BOOST_REGRESSOR="${SUBMIT_DIR}/src/g4/dependencies/G4Boost/G4Boost_regressor.json"
 
 mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
@@ -31,4 +33,6 @@ cd "$OUTDIR"
     python3 \
     "$G4BOOST" \
     --fasta "$JOB_FASTA" \
-    -g 3
+    -g 3 \
+    --classifier "$G4BOOST_CLASSIFIER" \
+    --regressor "$G4BOOST_REGRESSOR"

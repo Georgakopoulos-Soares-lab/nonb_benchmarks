@@ -9,7 +9,7 @@ Tools benchmarked here detect G-quadruplex (G4) forming sequences.
 Bioconductor R package.
 
 ```
-conda install -c conda-forge -c bioconda -y bioconductor-pqsfinder
+conda install -y -c conda-forge -c bioconda bioconductor-pqsfinder bioconductor-rtracklayer bioconductor-genomicranges
 ```
 
 Run: `sbatch src/g4/pqsfinder.sh`. Calls the wrapper `src/g4/pqsfinder.R`
