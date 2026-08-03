@@ -38,3 +38,7 @@ gdown 16bT7HDv71aRwyh3gBUbKwign1mtyLD2d
 gdown 1EE9goZ2JRSD8UTx501q71lGCk-CK3kqG
 gdown 1gZZdtAoDnDiLQqjQfGyuwt268Pe5sXW0
 
+DeepZ
+
+git clone https://github.com/Nazar1997/DeepZ_data_creation
+

@@ -15,22 +15,20 @@ RUN=${SLURM_ARRAY_TASK_ID}
 
 FASTA="data/chr18.fa"
 OUTDIR="results/h_dna/triplexfpp/run_${RUN}"
-OUTFILE="$OUTDIR/res.bed"
 BENCH="benchmarks/h_dna/triplexfpp/run_${RUN}.txt"
 TRIPLEXFPP_LIB="src/h_dna/dependencies/TriplexFPP/code"
 TRIPLEXFPP="src/h_dna/triplexfpp.py"
 
 mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+JOB_FASTA_NAME="clean_chr18.fa"
+JOB_FASTA="${OUTDIR}/${JOB_FASTA_NAME}"
 cp "$FASTA" "$JOB_FASTA"
+trap 'rm -f "$JOB_FASTA"' EXIT
 
 /usr/bin/time -v -o "$BENCH" \
-    python \
-    "$TRIPLEXFPP" \
+    python "$TRIPLEXFPP" \
     --triplex-lib "$TRIPLEXFPP_LIB" \
     --data-path "$OUTDIR" \
-    --input-file "$JOB_FASTA" \
-    --output-file "$OUTFILE"
-
-rm "$JOB_FASTA"
+    --input-file "$JOB_FASTA_NAME" \
+    --output-file "res.bed"
