@@ -30,4 +30,5 @@ cd "$OUTDIR"
 /usr/bin/time -v -o "$BENCH" \
     python3 \
     "$G4BOOST" \
-    --fasta "$JOB_FASTA"
+    --fasta "$JOB_FASTA" \
+    -g 3
