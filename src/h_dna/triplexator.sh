@@ -19,7 +19,7 @@ OUTFILE="$OUTDIR/res.bed"
 BENCH="benchmarks/h_dna/triplexator/run_${RUN}.txt"
 TRIPLEXATOR="src/h_dna/dependencies/triplexator/bin/triplexator"
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+mkdir -p "$OUTDIR" "tmp_$OUTDIR" "$(dirname "$BENCH")"
 
 JOB_FASTA="${OUTDIR}/clean_chr18.fa"
 cp "$FASTA" "$JOB_FASTA"

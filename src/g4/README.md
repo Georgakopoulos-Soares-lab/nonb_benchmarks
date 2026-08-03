@@ -1,47 +1,91 @@
-pqsfinder
-Install R and then use conda
+# G-quadruplexes (G4)
 
+Tools benchmarked here detect G-quadruplex (G4) forming sequences.
+
+## Tools
+
+### pqsfinder
+
+Bioconductor R package.
+
+```
 conda install -c conda-forge -c bioconda -y bioconductor-pqsfinder
+```
 
-G4Hunter
+Run: `sbatch src/g4/pqsfinder.sh`. Calls the wrapper `src/g4/pqsfinder.R`
+(`pqsfinder()` on the input FASTA), which writes a BED file.
 
-For Python 3 support:
+### G4Hunter
 
+Python 3 port, from https://github.com/Georgakopoulos-Soares-lab/G4Hunter-Companion
+
+```
 git clone https://github.com/Georgakopoulos-Soares-lab/G4Hunter-Companion
-cd g4hunter
+cd G4Hunter-Companion
 conda install -c conda-forge -c bioconda pybedtools datrie bedtools
 pip install -e .
+```
 
-Quadron
-installation instructions from https://github.com/aleksahak/Quadron
+Run: `sbatch src/g4/g4hunter.sh`. Invokes `g4hunter --outdir <dir> <fasta>`.
 
-install.packages("plyr")
-install.packages("data.table")
-install.packages("caret")
-install.packages("shiny")
-install.packages("doMC")
-install.packages("foreach")
-install.packages("itertools")
+### Quadron
 
-git clone https://github.com/aleksahak/Quadron (big repo takes a while to clone)
+From https://github.com/aleksahak/Quadron
+
+```
+install.packages(c("plyr", "data.table", "caret", "shiny", "doMC", "foreach", "itertools"))
+
+git clone https://github.com/aleksahak/Quadron   # large repo, clone takes a while
 
 install.packages(
     "http://cran.r-project.org/src/contrib/Archive/xgboost/xgboost_0.4-4.tar.gz",
-    repos=NULL,
-    type="source")
+    repos = NULL,
+    type = "source"
+)
 
-cd Quadron/lib/
-in R
-source("bitcompile.R") 
+cd Quadron/lib
+# in R:
+source("bitcompile.R")
+```
 
-G4Boost requires python 3.9 and not more recent builds since it breaks requirements
+Expected at `src/g4/dependencies/Quadron/Quadron.lib`.
 
+Run: `sbatch src/g4/quadron.sh` (GPU partition). Calls the wrapper
+`src/g4/quadron.R`, which loads `Quadron.lib` and runs
+`Quadron(FastaFile=..., OutFile=..., nCPU=1, SeqPartitionBy=1000000)`.
+
+### G4Boost
+
+Requires Python 3.9 specifically — more recent Python builds break the pinned
+dependencies. From https://github.com/hbusra/G4Boost
+
+```
 git clone https://github.com/hbusra/G4Boost.git
 cd G4Boost
-
 conda create -p g4boost -c conda-forge python=3.9 numpy=1.23 pandas=1.4.3 scikit-learn=1.0.2 py-xgboost=1.4.2
+```
 
-G4detector
+Expected at `src/g4/dependencies/G4Boost/G4Boost_v4.py`.
 
+Run: `sbatch src/g4/g4boost.sh` (GPU partition). Invokes
+`python3 G4Boost_v4.py --fasta <fasta> -g 3`.
+
+### G4detector
+
+From https://github.com/OrensteinLab/G4detector
+
+```
 git clone https://github.com/OrensteinLab/G4detector
-Keras 2.1.6 using Tensorflow backend
+```
+
+Requires Keras 2.1.6 with the TensorFlow backend. Vendored under
+`src/g4/dependencies/G4detector`; not yet wired up to a benchmark script.
+
+## Running the benchmarks
+
+Submit `sbatch src/g4/<tool>.sh` from the repository root (`pqsfinder`, `g4hunter`,
+`quadron`, `g4boost`). Each script is a 5-task job array that runs the tool once
+on `data/chr18.fa` per task, timed with `/usr/bin/time -v`. Output goes to
+`results/g4/<tool>/run_<N>/`, timing to `benchmarks/g4/<tool>/run_<N>.txt`, and
+SLURM logs to `logs/g4/<tool>/run_<N>.{out,err}`. `quadron` and `g4boost` are
+submitted to a GPU partition; the others to CPU.
