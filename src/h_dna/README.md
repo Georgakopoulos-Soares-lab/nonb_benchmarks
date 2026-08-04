@@ -7,7 +7,13 @@ Tools benchmarked here detect triplex-forming sequences (H-DNA).
 ### triplex (Bioconductor)
 
 ```
-conda install -y bioconductor-triplex bioconductor-rtracklayer bioconductor-genomicranges
+conda install -y bioconductor-rtracklayer bioconductor-genomicranges
+
+if (!require("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("triplex")
 ```
 
 Run: `sbatch src/h_dna/triplex.sh`. Calls the wrapper `src/h_dna/triplex.R`

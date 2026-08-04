@@ -4,8 +4,8 @@
 #SBATCH --nodes=1
 #SBATCH --exclusive
 #SBATCH --time=48:00:00
-#SBATCH --partition=spr
-#SBATCH --account=BCS25073
+#SBATCH --partition=gpu-a100
+#SBATCH --account=MCB26029
 #SBATCH --output=logs/general/einverted/run_%a.out
 #SBATCH --error=logs/general/einverted/run_%a.err
 
