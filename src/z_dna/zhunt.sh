@@ -6,16 +6,16 @@
 #SBATCH --time=48:00:00
 #SBATCH --partition=gpu-a100
 #SBATCH --account=MCB26029
-#SBATCH --output=logs/zdna/zhunt/run_%a.out
-#SBATCH --error=logs/zdna/zhunt/run_%a.err
+#SBATCH --output=logs/z_dna/zhunt/run_%a.out
+#SBATCH --error=logs/z_dna/zhunt/run_%a.err
 
 set -euo pipefail
 
 RUN=${SLURM_ARRAY_TASK_ID}
 
 FASTA="data/chr18.fa"
-OUTDIR="results/zdna/zhunt/run_${RUN}"
-BENCH="benchmarks/zdna/zhunt/run_${RUN}.txt"
+OUTDIR="results/z_dna/zhunt/run_${RUN}"
+BENCH="benchmarks/z_dna/zhunt/run_${RUN}.txt"
 ZHUNT="src/z_dna/dependencies/zhunt/bin/zhunt"
 
 mkdir -p "$OUTDIR" "$(dirname "$BENCH")"

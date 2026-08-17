@@ -6,8 +6,8 @@
 #SBATCH --time=48:00:00
 #SBATCH --partition=gpu-a100
 #SBATCH --account=MCB26029
-#SBATCH --output=logs/zdna/zseeker/slurm_run_%a.out
-#SBATCH --error=logs/zdna/zseeker/slurm_run_%a.err
+#SBATCH --output=logs/z_dna/zseeker/slurm_run_%a.out
+#SBATCH --error=logs/z_dna/zseeker/slurm_run_%a.err
 
 set -euo pipefail
 
