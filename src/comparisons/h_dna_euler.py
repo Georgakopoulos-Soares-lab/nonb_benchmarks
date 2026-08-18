@@ -64,9 +64,9 @@ for r in range(1, len(names) + 1):
 
         region = region.merge_overlaps()
 
-        z_dna_bps = float(region.lengths().sum() if len(region) else 0)
+        h_dna_bps = float(region.lengths().sum() if len(region) else 0)
 
-        venn_regions[f'{"&".join(str(tool) for tool in combo)}'] = round(z_dna_bps/1000, 2)
+        venn_regions[f'{"&".join(str(tool) for tool in combo)}'] = round(h_dna_bps/1000, 2)
 
 fig, ax = plt.subplots(figsize=(3.5, 3.5))
 

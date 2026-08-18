@@ -7,7 +7,7 @@ from functools import reduce
 from itertools import combinations
 from upsetplot import UpSet
 
-base_path = Path("../results")
+base_path = Path("../../results")
 
 g4hunter_res = pd.read_csv(
     base_path / "g4" / "g4hunter" / "run_1" / "clean_chr18_pG4s.g4_hunter.tsv",
@@ -62,11 +62,23 @@ quadron_res['End'] = quadron_res['Start'] + quadron_res['Length']
 
 quadron_pr = pr.PyRanges(quadron_res).merge_overlaps()
 
+nonb_gfa_g4_res = pd.read_csv(
+    base_path / "general" / "gfa" / "run_1" / "gfa_out_GQ.tsv",
+    sep = '\t'
+)
+
+nonb_gfa_g4_res = nonb_gfa_g4_res[['Start', 'Stop']].rename(columns = {'Stop': "End"})
+
+nonb_gfa_g4_res["Chromosome"] = "chr18"
+
+nonb_gfa_g4_pr = pr.PyRanges(nonb_gfa_g4_res).merge_overlaps()
+
 sources = {
     'G4Hunter': g4hunter_pr,
     'G4Boost': g4boost_pr,
     'Quadron': quadron_pr,
-    'Pqsfinder': pqsfinder_pr
+    'Pqsfinder': pqsfinder_pr,
+    'Non-B GFA': nonb_gfa_g4_pr
 }
 
 names = list(sources.keys())
@@ -95,7 +107,7 @@ for r in range(1, len(names) + 1):
         rows.append(row)
 
 g4_upset_data = pd.DataFrame(rows)
-g4_upset_data = g4_upset_data.set_index(["G4Hunter", "G4Boost", "Quadron", "Pqsfinder"])
+g4_upset_data = g4_upset_data.set_index(["G4Hunter", "G4Boost", "Quadron", "Pqsfinder", "Non-B GFA"])
 
 fig = plt.figure(figsize=(8, 2.5))
 
@@ -107,7 +119,8 @@ g4_upset = UpSet(
     sort_by = "degree",
     facecolor = "#838EA8",
     totals_plot_elements=0,
-    element_size=None
+    element_size=None,
+    min_subset_size=1
 )
 
 axes = g4_upset.plot(fig=fig)
@@ -130,7 +143,6 @@ axes["intersections"].yaxis.label.set_fontsize(8)
 
 for text in axes["intersections"].texts:
     text.set_fontsize(6)
-
 
 plt.savefig(
     base_path / "plots" / "g4_upset.pdf",
