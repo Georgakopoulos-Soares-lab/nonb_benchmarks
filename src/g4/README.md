@@ -89,3 +89,10 @@ on `data/chr18.fa` per task, timed with `/usr/bin/time -v`. Output goes to
 `results/g4/<tool>/run_<N>/`, timing to `benchmarks/g4/<tool>/run_<N>.txt`, and
 SLURM logs to `logs/g4/<tool>/run_<N>.{out,err}`. `quadron` and `g4boost` are
 submitted to a GPU partition; the others to CPU.
+
+
+QGRS Mapper
+git clone https://github.com/freezer333/qgrs-cpp
+
+cd qgrs-cpp
+g++ -o qgrs src/default.cpp src/qgrs.cpp --std=c++11
