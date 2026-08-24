@@ -15,7 +15,7 @@ RUN=${SLURM_ARRAY_TASK_ID}
 
 FASTA="data/chr18.fa"
 OUTDIR="results/g4/g4_imgrinder/run_${RUN}"
-OUTFILE="$OUTDIR/res.bed"
+OUTFILE="$OUTDIR/res.csv"
 BENCH="benchmarks/g4/g4_imgrinder/run_${RUN}.txt"
 G4_IMGRINDER="src/g4/g4_imgrinder.R"
 

@@ -81,3 +81,13 @@ Output goes to `results/h_dna/<tool>/run_<N>/`, timing to
 `benchmarks/h_dna/<tool>/run_<N>.txt`, and SLURM logs to
 `logs/h_dna/<tool>/run_<N>.{out,err}`. `triplexfpp` and `triplexator` are
 submitted to a GPU partition; `triplex` and `hseeker` to CPU.
+
+
+PATO
+
+git clone https://github.com/UDC-GAC/pato
+
+cd pato
+cmake -B build . && cmake --build build
+
+ ./build/tools/PATO/PATO 

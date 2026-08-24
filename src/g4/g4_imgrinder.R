@@ -6,7 +6,9 @@ suppressPackageStartupMessages({
   })
 })
 
-if (length(args) != 3) {
+args <- commandArgs(trailingOnly = TRUE)
+
+if (length(args) != 2) {
   stop("Usage: Rscript g4_imgrinder.R <input.fasta> <output.csv>", call. = FALSE)
 }
 
