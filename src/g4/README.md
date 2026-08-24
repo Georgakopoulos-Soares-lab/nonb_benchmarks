@@ -96,3 +96,35 @@ git clone https://github.com/freezer333/qgrs-cpp
 
 cd qgrs-cpp
 g++ -o qgrs src/default.cpp src/qgrs.cpp --std=c++11
+
+G4-iM Grinder (Installation takes a while)
+pck <- c(
+  "stringr", "stringi", "plyr", "seqinr", "stats", "parallel", 
+  "doParallel", "beepr", "stats4", "devtools", "dplyr", 
+  "BiocManager", "tibble"
+)
+
+foo <- function(x){
+  for( i in x ){
+    if( ! require( i , character.only = TRUE ) ){
+      install.packages( i , dependencies = TRUE )
+      require( i , character.only = TRUE )
+    }
+  }
+}
+
+foo(pck)
+
+BiocManager::install(c("BiocGenerics", "S4Vectors", "Biostrings", "biomartr", "IRanges"), 
+                     ask = FALSE, update = TRUE)
+
+maybe if the above returns errors on some libraries
+
+conda install -c conda-forge -c bioconda \
+  r-xml2 r-xml r-rcurl r-biocmanager \
+  bioconductor-biomart r-biomartr
+
+conda install -c conda-forge r-systemfonts r-textshaping r-ragg r-pkgdown r-devtools
+devtools::install_github("EfresBR/G4iMGrinder")
+
+library(G4iMGrinder)
