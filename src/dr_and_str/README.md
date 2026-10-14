@@ -44,3 +44,9 @@ task, timed with `/usr/bin/time -v`. Output goes to
 `results/dr_and_str/<tool>/run_<N>/`, timing to
 `benchmarks/dr_and_str/<tool>/run_<N>.txt`, and SLURM logs to
 `logs/dr_and_str/<tool>/run_<N>.{out,err}`.
+
+ULTRA
+git clone https://github.com/TravisWheelerLab/ULTRA
+cd ULTRA
+cmake .
+make
