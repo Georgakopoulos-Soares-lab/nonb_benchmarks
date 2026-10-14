@@ -50,3 +50,6 @@ git clone https://github.com/TravisWheelerLab/ULTRA
 cd ULTRA
 cmake .
 make
+
+Dot2dot
+git clone https://github.com/Gege7177/Dot2dot
