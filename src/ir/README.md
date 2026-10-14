@@ -55,3 +55,11 @@ SLURM logs to `logs/ir/<tool>/run_<N>.{out,err}` (tool names are lowercased in
 the log/results paths: `detectir`, `matlabir`). The MATLAB-based tools
 (`detectIR`, `matlabIR`) pass the input/output paths via environment
 variables set in the sbatch script, read by the `.m` scripts with `getenv()`.
+
+
+IUPACpal
+git clone https://github.com/steven31415/IUPACpal
+cd IUPACpal
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
+./pre-install.sh
+make -f Makefile.gcc

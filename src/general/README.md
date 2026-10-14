@@ -54,3 +54,17 @@ once on `data/chr18.fa` per task, timed with `/usr/bin/time -v`. Output goes to
 `benchmarks/general/<tool>/run_<N>.txt`, and SLURM logs to
 `logs/general/<tool>/run_<N>.{out,err}` (the `gfa` job itself is named
 `nonB_gfa` in its SLURM logs).
+
+
+RepEx
+git clone https://github.com/sdanthinne/RepEx
+cd RepEx
+mkdir -p src/bin
+
+make install
+
+
+NeSSie
+git clone https://github.com/B3rse/nessie
+cd nessie
+make

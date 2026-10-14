@@ -25,3 +25,12 @@ job array that runs QmRLFS-finder once on `data/chr18.fa` per task, timed with
 `results/r_loops/qmrlfs_finder/run_<N>/`, timing to
 `benchmarks/r_loops/qmrlfs_finder/run_<N>.txt`, and SLURM logs to
 `logs/r_loops/qmrlfs_finder/run_<N>.{out,err}`.
+
+deepRloopPre
+
+We recommend mamba for this since conda stalled to update the env
+
+git clone https://github.com/PEHGP/deepRloopPre
+cd deepRloopPre
+mamba env update -f ml.yaml
+python setup.py install
