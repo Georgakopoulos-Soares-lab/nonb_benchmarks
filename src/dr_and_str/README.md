@@ -56,3 +56,6 @@ git clone https://github.com/Gege7177/Dot2dot
 
 Pytrf
 pip install -U pytrf
+
+PERF
+pip install perf_ssr
