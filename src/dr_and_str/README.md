@@ -53,3 +53,6 @@ make
 
 Dot2dot
 git clone https://github.com/Gege7177/Dot2dot
+
+Pytrf
+pip install -U pytrf
