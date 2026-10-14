@@ -26,6 +26,26 @@ job array that runs QmRLFS-finder once on `data/chr18.fa` per task, timed with
 `benchmarks/r_loops/qmrlfs_finder/run_<N>.txt`, and SLURM logs to
 `logs/r_loops/qmrlfs_finder/run_<N>.{out,err}`.
 
+DeepER
+git clone https://github.com/NjuChenlab/DeepER
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
+
+
+
+SkewR
+conda install -c bioconda -c conda-forge bedtools "perl>=5.18" ucsc-bigbedtobed
+git clone https://github.com/KorfLab/StochHMM.git
+cd StochHMM
+./configure
+make
+cp stochhmm "$CONDA_PREFIX/bin/"
+
+git clone https://github.com/srhartono/SkewR
+
+
+
+
 deepRloopPre
 
 We recommend mamba for this since conda stalled to update the env

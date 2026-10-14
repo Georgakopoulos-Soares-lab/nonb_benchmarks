@@ -22,8 +22,8 @@ Python 3 port, from https://github.com/Georgakopoulos-Soares-lab/G4Hunter-Compan
 ```
 git clone https://github.com/Georgakopoulos-Soares-lab/G4Hunter-Companion
 cd G4Hunter-Companion
-conda install -c conda-forge -c bioconda pybedtools datrie bedtools
-pip install -e .
+conda install -c conda-forge -c bioconda datrie==0.8.2 pybedtools==0.12.0 bedtools
+python -m pip install -e .
 ```
 
 Run: `sbatch src/g4/g4hunter.sh`. Invokes `g4hunter --outdir <dir> <fasta>`.
@@ -128,3 +128,6 @@ conda install -c conda-forge r-systemfonts r-textshaping r-ragg r-pkgdown r-devt
 devtools::install_github("EfresBR/G4iMGrinder")
 
 library(G4iMGrinder)
+
+G4Catchall
+git clone https://github.com/odoluca/G4Catchall
