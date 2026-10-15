@@ -140,3 +140,10 @@ ImGQfinder
 git clone https://github.com/PollyTikhonova/ImGQfinder
 cd ImGQfinder
 python -m pip install -r requirements.txt
+
+g4predict
+git clone https://github.com/mparker2/g4predict
+cd g4predict
+python setup.py build
+python setup.py install
+python setup.py test
