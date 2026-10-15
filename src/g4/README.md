@@ -131,3 +131,12 @@ library(G4iMGrinder)
 
 G4Catchall
 git clone https://github.com/odoluca/G4Catchall
+
+QPARSE
+install numpy 
+git clone https://github.com/B3rse/qparse
+
+ImGQfinder
+git clone https://github.com/PollyTikhonova/ImGQfinder
+cd ImGQfinder
+python -m pip install -r requirements.txt
