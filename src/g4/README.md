@@ -147,3 +147,8 @@ cd g4predict
 python setup.py build
 python setup.py install
 python setup.py test
+
+G4mismatch
+git clone https://github.com/OrensteinLab/G4mismatch
+python version 3.9-3.11
+python -m pip install "tensorflow[and-cuda]==2.15.1" "numpy<2" pandas
