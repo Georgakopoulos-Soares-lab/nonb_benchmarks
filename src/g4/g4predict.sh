@@ -1,34 +1,43 @@
 #!/bin/bash
-#SBATCH --job-name=g4predict
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/g4/g4predict/run_%a.out
-#SBATCH --error=logs/g4/g4predict/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
-SUBMIT_DIR=$(pwd)
+NRUNS=${1:-1}
 
-FASTA="${SUBMIT_DIR}/data/chr18.fa"
-OUTDIR="$(readlink -f -m results/g4/g4predict/run_${RUN})"
-OUTFILE="$OUTDIR/res.bed"
-BENCH="${SUBMIT_DIR}/benchmarks/g4/g4predict/run_${RUN}.txt"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
-trap 'rm -f "$JOB_FASTA"' EXIT
+FASTA="$ROOT/data/chr18.fa"
 
-cd "$OUTDIR"
+for RUN in $(seq 1 "$NRUNS"); do
 
-/usr/bin/time -v -o "$BENCH" \
-    g4predict \
-    intra \
-    --fasta "$JOB_FASTA" \
-    -o "$OUTFILE"
+    OUTDIR="$ROOT/results/g4/g4predict/run_${RUN}"
+    OUTFILE="$OUTDIR/res.bed"
+    BENCH="$ROOT/benchmarks/g4/g4predict/run_${RUN}.txt"
+
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+
+    JOB_FASTA="$OUTDIR/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    ulimit -c unlimited
+
+    cd "$OUTDIR"
+
+    /usr/bin/time -v -o "$BENCH" \
+        g4predict \
+        intra \
+        --fasta "$JOB_FASTA" \
+        --bed "$OUTFILE" \
+        --min-tetrad 3 \
+        --max-tetrad 4 \
+        --min-loop 1 \
+        --max-loop 9 \
+        --bulges 0
+    
+    rm -f "$JOB_FASTA"
+done

@@ -1,34 +1,46 @@
 #!/bin/bash
-#SBATCH --job-name=ImGQfinder
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/g4/ImGQfinder/run_%a.out
-#SBATCH --error=logs/g4/ImGQfinder/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
-SUBMIT_DIR=$(pwd)
+NRUNS=${1:-1}
 
-FASTA="${SUBMIT_DIR}/data/chr18.fa"
-OUTDIR="$(readlink -f -m results/g4/ImGQfinder/run_${RUN})"
-OUTFILE="$OUTDIR/res.txt"
-BENCH="${SUBMIT_DIR}/benchmarks/g4/ImGQfinder/run_${RUN}.txt"
-IMGQFINDER="${SUBMIT_DIR}/src/g4/dependencies/ImGQfinder/imgqfinder.py"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
-trap 'rm -f "$JOB_FASTA"' EXIT
+FASTA="$ROOT/data/chr18.fa"
 
-cd "$OUTDIR"
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/g4/ImGQfinder/run_${RUN}"
+    OUTFILE="$OUTDIR/res.txt"
+    BENCH="$ROOT/benchmarks/g4/ImGQfinder/run_${RUN}.txt"
+    IMGQFINDER="$ROOT/src/g4/dependencies/ImGQfinder/imgqfinder.py"
 
-/usr/bin/time -v -o "$BENCH" \
-    python3 \
-    "$IMGQFINDER" \
-    -i "$JOB_FASTA"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+
+    JOB_FASTA="$OUTDIR/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    ulimit -c unlimited
+
+    cd "$OUTDIR"
+
+    /usr/bin/time -v -o "$BENCH" \
+        python3 \
+        "$IMGQFINDER" \
+        --input "$JOB_FASTA" \
+        --output "$OUTDIR" \
+        -L 9 \
+        -mdef 0 \
+        -maxbulge 0 \
+        -tetdef 0 \
+        --nthreads 1 \
+        --repeats \
+        --output_type 1
+
+    rm -f "$JOB_FASTA"
+
+done

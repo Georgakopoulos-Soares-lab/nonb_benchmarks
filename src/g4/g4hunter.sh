@@ -1,30 +1,35 @@
 #!/bin/bash
-#SBATCH --job-name=g4hunter
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/g4/g4hunter/run_%a.out
-#SBATCH --error=logs/g4/g4hunter/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-FASTA="data/chr18.fa"
-OUTDIR="results/g4/g4hunter/run_${RUN}"
-BENCH="benchmarks/g4/g4hunter/run_${RUN}.txt"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+FASTA="$ROOT/data/chr18.fa"
 
-/usr/bin/time -v -o "$BENCH" \
-    g4hunter \
-    --outdir "$OUTDIR" \
-    "$JOB_FASTA" 
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/g4/g4hunter/run_${RUN}"
+    BENCH="$ROOT/benchmarks/g4/g4hunter/run_${RUN}.txt"
 
-rm "$JOB_FASTA"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    /usr/bin/time -v -o "$BENCH" \
+        g4hunter \
+        --window-size 25 \
+        --min_score 1.5 \
+        --min-loop-length 1 \
+        --max-loop-length 9 \
+        --outdir "$OUTDIR" \
+        "$JOB_FASTA" 
+
+    rm "$JOB_FASTA"
+done

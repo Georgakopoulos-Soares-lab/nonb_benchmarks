@@ -133,13 +133,13 @@ G4Catchall
 git clone https://github.com/odoluca/G4Catchall
 
 QPARSE
-install numpy 
+install numpy<1.24 
 git clone https://github.com/B3rse/qparse
 
 ImGQfinder
 git clone https://github.com/PollyTikhonova/ImGQfinder
 cd ImGQfinder
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt "numpy==1.23.5"
 
 g4predict
 git clone https://github.com/mparker2/g4predict
@@ -151,4 +151,4 @@ python setup.py test
 G4mismatch
 git clone https://github.com/OrensteinLab/G4mismatch
 python version 3.9-3.11
-python -m pip install "tensorflow[and-cuda]==2.15.1" "numpy<2" pandas
+python -m pip install "tensorflow[and-cuda]==2.15.1" "numpy<2" "pandas<2" biopython joblib

@@ -1,43 +1,44 @@
 #!/bin/bash
-#SBATCH --job-name=G4mismatch
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/g4/G4mismatch/run_%a.out
-#SBATCH --error=logs/g4/G4mismatch/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-FASTA="$(readlink -f data/chr18.fa)"
-OUTDIR="$(readlink -f -m results/g4/G4mismatch/run_${RUN})"
-BENCH="$(readlink -f -m benchmarks/g4/G4mismatch/run_${RUN}.txt)"
-G4MISMATCH="$(readlink -f -m src/g4/dependencies/G4mismatch/G4mismatch_scan.py)"
-MODEL="$(readlink -f -m src/g4/dependencies/G4mismatch/models/model_KPDS.h5)"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+FASTA="$ROOT/data/chr18.fa"
 
-ulimit -c unlimited
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/g4/G4mismatch/run_${RUN}"
+    BENCH="$ROOT/benchmarks/g4/G4mismatch/run_${RUN}.txt"
+    G4MISMATCH="$ROOT/src/g4/dependencies/G4mismatch/G4mismatch_scan.py"
+    MODEL="$ROOT/src/g4/dependencies/G4mismatch/models/model_KPDS.h5"
 
-cd "$OUTDIR"
-/usr/bin/time -v -o "$BENCH" \
-    python \
-    "$G4CATCHALL" \
-    --fasta "$JOB_FASTA"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-python "$G4MISMATCH" \
-    -dp "$JOB_FASTA" \
-    -mp "$MODEL" \
-    -of "$OUTDIR" \
-    -m 1 \
-    -fb 14.4 \
-    -bs 128
+    JOB_FASTA="$OUTDIR/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
 
-rm "$JOB_FASTA"
+    ulimit -c unlimited
+
+    cd "$OUTDIR"
+
+    /usr/bin/time -v -o "$BENCH" \
+        python "$G4MISMATCH" \
+            --data_path "$JOB_FASTA" \
+            --model_path "$MODEL" \
+            --out_file "$OUTDIR" \
+            --merge 1 \
+            --reverse_complement 1 \
+            --filter_bins 14.4 \
+            --multiprocessing 0 \
+            --batch_size 128
+
+    rm "$JOB_FASTA"
+
+done

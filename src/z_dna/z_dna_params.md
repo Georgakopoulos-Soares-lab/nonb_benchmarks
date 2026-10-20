@@ -1,0 +1,9 @@
+Target: non-B DB Z-DNA motif (Cer et al., NAR 2011; non-B GFA `-minZlen 10`), defined as a run of ≥ 10 nt in which every dinucleotide step is GC, CG, GT, TG, AC or CA (alternating purine–pyrimidine; any AT/TA or other step ends the run), scanned on one strand (the motif is its own reverse complement), with no score cutoff.
+
+| Tool | Option | Default | Value to use | Matches target? | Gap |
+|---|---|---|---|---|---|
+| ZSeeker (`zseeker.sh`) | `--GC_weight`<br>`--GT_weight`<br>`--AC_weight`<br>`--AT_weight`<br>`--consecutive_AT_scoring`<br>`--mismatch_penalty_type`<br>`--mismatch_penalty_starting_value`<br>`--mismatch_penalty_linear_delta`<br>`--threshold`<br>`--drop_threshold` | 7.0<br>1.25<br>1.25<br>0.5<br>0.5,0.5,0.5,0.5,0,0,-5,-100<br>linear<br>3<br>3<br>50<br>50 | 1<br>1<br>1<br>-100000<br>0<br>linear<br>100000<br>0<br>9<br>50 | yes | |
+| Z-Hunt (`zhunt.sh`) | `windowsize` (arg 1, dinucleotides)<br>`minsize` (arg 2, dinucleotides)<br>`maxsize` (arg 3, dinucleotides)<br>Z-score cutoff (post-filter on column 3 of `.Z-SCORE`) | required, no default (repo: 12)<br>required (repo: 6)<br>required (repo: 12)<br>none | 12<br>5<br>12<br>≥ 700 | partly | Thermodynamic score, not APP rule; stretches ≤ 24 bp |
+| Z-GENIE (no run script) | "Z-Hunt Parameters" (window, min, max)<br>"Manual Z-Score Threshold" | 8, 6, 8<br>600 | 12, 5, 12<br>700 | partly | Thermodynamic score, not APP rule; merges hits ≤ 2×minsize apart |
+| Z-DNABERT (`zdnabert.sh`, `zdnabert.py`) | model checkpoint<br>`model_confidence_threshold`<br>`minimum_sequence_length` (keeps runs longer than this, in 6-mer positions) | HG kouzine (notebook; script uses HG_chipseq)<br>0.5<br>10 | HG_kouzine<br>0.5<br>9 (≥ 10 positions) | partly | Learned from experimental maps; APP rule not enforceable |
+| DeepZ (no run script) | none (class = argmax of 2-class softmax) | argmax (p > 0.5) | argmax (p > 0.5) | no | Omics-based model; needs hg19 tracks, no released weights |

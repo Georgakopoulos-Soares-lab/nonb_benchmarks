@@ -14,6 +14,5 @@ load(quadron_lib)
 Quadron(
   FastaFile = input_file, 
   OutFile = output_file,
-  nCPU = 1,
-  SeqPartitionBy = 1000000
+  nCPU = 1
 )

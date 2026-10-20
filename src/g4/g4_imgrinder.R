@@ -22,5 +22,17 @@ Sequence <- paste0(
   collapse = ""
 )
 
-res <- G4iMGrinder(Name = "chr18", Sequence = Sequence, NCores = 1)
+res <- G4iMGrinder(
+  Name = "chr18",
+  Sequence = Sequence,
+  NCores = 1,
+  BulgeSize = 0,
+  MinRunSize = 3,
+  MaxRunSize = 4,
+  MinLoopSize = 1,
+  MaxLoopSize = 9,
+  MinNRuns = 0,
+  MaxNRuns = 4
+)
+
 write.csv(res$PQSM2a, output_file, row.names = FALSE)
