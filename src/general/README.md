@@ -10,7 +10,7 @@ general repeat finders and the EMBOSS repeat-finding tools.
 Get the latest version from https://github.com/bioinfolabmu/GenericRepeatFinder
 
 ```
-tar zxf GenericRepeatFinder-1.0.2.tar.gz
+git clone https://github.com/bioinfolabmu/GenericRepeatFinder
 cd GenericRepeatFinder-1.0.2/src
 make
 ```

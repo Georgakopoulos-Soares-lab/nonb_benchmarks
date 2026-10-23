@@ -1,29 +1,30 @@
 #!/bin/bash
-#SBATCH --job-name=zhunt
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/z_dna/zhunt/run_%a.out
-#SBATCH --error=logs/z_dna/zhunt/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-FASTA="data/chr18.fa"
-OUTDIR="results/z_dna/zhunt/run_${RUN}"
-BENCH="benchmarks/z_dna/zhunt/run_${RUN}.txt"
-ZHUNT="src/z_dna/dependencies/zhunt/bin/zhunt"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-CLEAN_FASTA="${OUTDIR}/clean_chr18.fa"
-grep -v '^>' "$FASTA" | tr -d '\n' > "$CLEAN_FASTA"
+FASTA="$ROOT/data/chr18.fa"
 
-/usr/bin/time -v -o "$BENCH" \
-    "$ZHUNT" 12 6 12 "$CLEAN_FASTA"
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/z_dna/zhunt/run_${RUN}"
+    BENCH="$ROOT/benchmarks/z_dna/zhunt/run_${RUN}.txt"
+    ZHUNT="$ROOT/src/z_dna/dependencies/zhunt/bin/zhunt"
 
-rm "$CLEAN_FASTA"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+
+    CLEAN_FASTA="${OUTDIR}/clean_chr18.fa"
+    grep -v '^>' "$FASTA" | tr -d '\n' > "$CLEAN_FASTA"
+
+    /usr/bin/time -v -o "$BENCH" \
+        "$ZHUNT" 12 6 12 "$CLEAN_FASTA"
+
+    rm "$CLEAN_FASTA"
+done

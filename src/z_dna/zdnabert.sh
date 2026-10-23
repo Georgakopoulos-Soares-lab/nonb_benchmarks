@@ -1,45 +1,46 @@
 #!/bin/bash
-#SBATCH --job-name=zdnabert
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/z_dna/zdnabert/run_%a.out
-#SBATCH --error=logs/z_dna/zdnabert/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-FASTA="data/chr18.fa"
-OUTDIR="results/z_dna/zdnabert/run_${RUN}"
-OUTFILE="$OUTDIR/res.txt"
-BENCH="benchmarks/z_dna/zdnabert/run_${RUN}.txt"
-ZDNABERT="src/z_dna/zdnabert.py"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-DEPENDENCY_DIR="src/z_dna/dependencies"
-JOB_MODEL_DIR="${OUTDIR}/model_bin"
+ROOT="$(pwd)"
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")" "$JOB_MODEL_DIR"
+FASTA="$ROOT/data/chr18.fa"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/z_dna/zdnabert/run_${RUN}"
+    OUTFILE="$OUTDIR/res.txt"
+    BENCH="$ROOT/benchmarks/z_dna/zdnabert/run_${RUN}.txt"
+    ZDNABERT="$ROOT/src/z_dna/zdnabert.py"
 
-cp "$FASTA" "$JOB_FASTA"
+    DEPENDENCY_DIR="$ROOT/src/z_dna/dependencies"
+    JOB_MODEL_DIR="${OUTDIR}/model_bin"
 
-cp "$DEPENDENCY_DIR/Z-DNABERT/config.json" \
-    "$DEPENDENCY_DIR/Z-DNABERT/special_tokens_map.json" \
-    "$DEPENDENCY_DIR/Z-DNABERT/tokenizer_config.json" \
-    "$DEPENDENCY_DIR/Z-DNABERT/vocab.txt" \
-    "$DEPENDENCY_DIR/Z-DNABERT/models/HG_chipseq/pytorch_model.bin" \
-    "$JOB_MODEL_DIR"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")" "$JOB_MODEL_DIR"
 
-/usr/bin/time -v -o "$BENCH" \
-    python \
-    "$ZDNABERT" \
-    "$JOB_MODEL_DIR" \
-    "$JOB_FASTA" \
-    "$OUTFILE"
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
 
-rm "$JOB_FASTA"
+    cp "$FASTA" "$JOB_FASTA"
+
+    cp "$DEPENDENCY_DIR/Z-DNABERT/config.json" \
+        "$DEPENDENCY_DIR/Z-DNABERT/special_tokens_map.json" \
+        "$DEPENDENCY_DIR/Z-DNABERT/tokenizer_config.json" \
+        "$DEPENDENCY_DIR/Z-DNABERT/vocab.txt" \
+        "$DEPENDENCY_DIR/Z-DNABERT/models/HG_kouzine/pytorch_model.bin" \
+        "$JOB_MODEL_DIR"
+
+    /usr/bin/time -v -o "$BENCH" \
+        python \
+        "$ZDNABERT" \
+        "$JOB_MODEL_DIR" \
+        "$JOB_FASTA" \
+        "$OUTFILE"
+
+    rm "$JOB_FASTA"
+done

@@ -1,42 +1,41 @@
 #!/bin/bash
-#SBATCH --job-name=detectir
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/ir/detectir/run_%a.out
-#SBATCH --error=logs/ir/detectir/run_%a.err
 
-module load matlab
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+module load matlab
 
-SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-cd "$SUBMIT_DIR"
+NRUNS=${1:-1}
 
-FASTA="$(readlink -f data/chr18.fa)"
-DETECTIR="$(readlink -f src/ir/detectIR.m)"
-OUTDIR="$(readlink -f -m results/ir/detectir/run_${RUN})"
-BENCH="$(readlink -f -m benchmarks/ir/detectir/run_${RUN}.txt)"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+FASTA="$ROOT/data/chr18.fa"
 
-export IR_FUNCDIR="$(readlink -f src/ir/dependencies/detectIR)"
-export IR_INPUT="$JOB_FASTA"
-export IR_PERF_OUT="$OUTDIR/perfect_repeats.fasta"
-export IR_PERF_RUN="$OUTDIR/perfect_repeats.runtime"
-export IR_IMPERF_OUT="$OUTDIR/imperfect_repeats.fasta"
-export IR_IMPERF_RUN="$OUTDIR/imperfect_repeats.runtime"
+for RUN in $(seq 1 "$NRUNS"); do
+    DETECTIR="$ROOT/src/ir/detectIR.m"
+    OUTDIR="$ROOT/results/ir/detectir/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/detectir/run_${RUN}.txt"
 
-/usr/bin/time -v -o "$BENCH" \
-    matlab \
-    -nodesktop \
-    -nosplash < "$DETECTIR"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-rm "$JOB_FASTA"
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    export IR_FUNCDIR="$ROOT/src/ir/dependencies/detectIR"
+    export IR_INPUT="$JOB_FASTA"
+    export IR_PERF_OUT="$OUTDIR/perfect_repeats.fasta"
+    export IR_PERF_RUN="$OUTDIR/perfect_repeats.runtime"
+    export IR_IMPERF_OUT="$OUTDIR/imperfect_repeats.fasta"
+    export IR_IMPERF_RUN="$OUTDIR/imperfect_repeats.runtime"
+
+    /usr/bin/time -v -o "$BENCH" \
+        matlab \
+        -nodesktop \
+        -nosplash < "$DETECTIR"
+
+    rm "$JOB_FASTA"
+done

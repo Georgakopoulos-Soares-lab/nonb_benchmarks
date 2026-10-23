@@ -1,41 +1,43 @@
 #!/bin/bash
-#SBATCH --job-name=trf
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/dr_and_str/trf/run_%a.out
-#SBATCH --error=logs/dr_and_str/trf/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-cd "$SUBMIT_DIR"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-FASTA="$(readlink -f data/chr18.fa)"
-OUTDIR="$(readlink -f -m results/dr_and_str/trf/run_${RUN})"
-BENCH="$(readlink -f -m benchmarks/dr_and_str/trf/run_${RUN}.txt)"
-TRF="$(readlink -f src/dr_and_str/dependencies/TRF/build/src/trf)"
+ROOT="$(pwd)"
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+FASTA="$ROOT/data/chr18.fa"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+for RUN in $(seq 1 "$NRUNS"); do
+    OUTDIR="$ROOT/results/dr_and_str/trf/run_${RUN}"
+    BENCH="$ROOT/benchmarks/dr_and_str/trf/run_${RUN}.txt"
+    TRF="$ROOT/src/dr_and_str/dependencies/TRF/build/src/trf"
 
-ulimit -c unlimited
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-cd "$OUTDIR"
-/usr/bin/time -v -o "$BENCH" \
-    "$TRF" \
-    "$JOB_FASTA" \
-    2 7 7 80 10 50 500 \
-    -f \
-    -d \
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    ulimit -c unlimited
+
+    cd "$OUTDIR"
+
+    /usr/bin/time -v -o "$BENCH" \
+        "$TRF" \
+        "$JOB_FASTA" \
+        2 7 7 80 10 24 6 \
+        -f \
+        -h \
+        -ngs
+
+    rm "$JOB_FASTA"
+done
+
+ -d \
     -m \
     -h
-
-rm "$JOB_FASTA"

@@ -5,7 +5,7 @@ addpath(funcDir);
 inputFile = getenv('IR_INPUT');
 
 outputFile = getenv('IR_OUTPUT');
-[iRStartPos, iREndPos, iRSeq] = findIR(inputFile, 4, 1000);
+[iRStartPos, iREndPos, iRSeq] = findIR(inputFile, 20, 1000);
 
 fid = fopen(outputFile, 'w');
 

@@ -232,6 +232,6 @@ src/ir/dependencies
 src/dr_and_str/dependencies
 src/r_loops/dependencies
 src/g4/dependencies
-src/general/dependencies
+src/general/non-B_gfa
 src/plots.ipynb
 res_intersection.ipynb

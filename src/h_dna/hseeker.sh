@@ -1,32 +1,38 @@
 #!/bin/bash
-#SBATCH --job-name=hseeker
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/h_dna/hseeker/run_%a.out
-#SBATCH --error=logs/h_dna/hseeker/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-FASTA="data/chr18.fa"
-OUTDIR="results/h_dna/hseeker/run_${RUN}"
-OUTPREFIX="$OUTDIR/res"
-BENCH="benchmarks/h_dna/hseeker/run_${RUN}.txt"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+ROOT="$(pwd)"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+FASTA="$ROOT/data/chr18.fa"
 
-/usr/bin/time -v -o "$BENCH" \
-    hseeker \
-    -seq "$JOB_FASTA" \
-    -out "$OUTPREFIX" \
-    -workers 1
+for RUN in $(seq 1 "$NRUNS"); do
 
-rm "$JOB_FASTA"
+    OUTDIR="$ROOT/results/h_dna/hseeker/run_${RUN}"
+    OUTPREFIX="$OUTDIR/res"
+    BENCH="$ROOT/benchmarks/h_dna/hseeker/run_${RUN}.txt"
+
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    /usr/bin/time -v -o "$BENCH" \
+        hseeker \
+        -seq "$JOB_FASTA" \
+        -out "$OUTPREFIX" \
+        -workers 1 \
+        -minrep 10 \
+        -maxrep 30 \
+        -maxspacer 10
+
+    rm "$JOB_FASTA"
+
+done

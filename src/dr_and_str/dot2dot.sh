@@ -1,35 +1,44 @@
 #!/bin/bash
-#SBATCH --job-name=Dot2dot
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/dr_and_str/Dot2dot/run_%a.out
-#SBATCH --error=logs/dr_and_str/Dot2dot/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-cd "$SUBMIT_DIR"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-FASTA="$(readlink -f data/chr18.fa)"
-DOT2DOT="$(readlink -f src/dr_and_str/dependencies/Dot2dot/executables/dot.linux)"
-OUTDIR="$(readlink -f -m results/dr_and_str/Dot2dot/run_${RUN})"
-BENCH="$(readlink -f -m benchmarks/dr_and_str/Dot2dot/run_${RUN}.txt)"
+ROOT="$(pwd)"
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+FASTA="$ROOT/data/chr18.fa"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+for RUN in $(seq 1 "$NRUNS"); do
+    DOT2DOT="$ROOT/src/dr_and_str/dependencies/Dot2dot/executables/dot.linux"
+    CONFIG="$ROOT/src/dr_and_str/dependencies/dot2dot.cfg"
+    OUTDIR="$ROOT/results/dr_and_str/Dot2dot/run_${RUN}"
+    OUTFILE="$OUTDIR/res.bed"
+    BENCH="$ROOT/benchmarks/dr_and_str/Dot2dot/run_${RUN}.txt"
 
-cd "$OUTDIR"
-/usr/bin/time -v -o "$BENCH" \
-    "$DOT2DOT" \
-    --threads 1 \
-    --sequence "$JOB_FASTA"
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-rm "$JOB_FASTA"
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    cd "$OUTDIR"
+    /usr/bin/time -v -o "$BENCH" \
+        "$DOT2DOT" \
+        --threads 1 \
+        --sequence "$JOB_FASTA" \
+        --config "$CONFIG" \
+        --minmotif 1 \
+        --maxmotif 6 \
+        --minmatch 1 \
+        --maxgaps 0 \
+        --maxinsert 0 \
+        --verbose \
+        --output "$OUTFILE"
+
+    rm "$JOB_FASTA"
+
+done

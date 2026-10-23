@@ -28,9 +28,7 @@ job array that runs QmRLFS-finder once on `data/chr18.fa` per task, timed with
 
 DeepER
 git clone https://github.com/NjuChenlab/DeepER
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
-
-
+pip install torch numpy 
 
 
 SkewR
@@ -44,8 +42,6 @@ cp stochhmm "$CONDA_PREFIX/bin/"
 git clone https://github.com/srhartono/SkewR
 
 
-
-
 deepRloopPre
 
 We recommend mamba for this since conda stalled to update the env
@@ -54,3 +50,6 @@ git clone https://github.com/PEHGP/deepRloopPre
 cd deepRloopPre
 mamba env update -f ml.yaml
 python setup.py install
+
+download the pretrained human model from http://bioinfor.kib.ac.cn/R-loopAtlas/deepRloopPre/model/hela_classification.hdf5
+wget http://bioinfor.kib.ac.cn/R-loopAtlas/deepRloopPre/model/hela_classification.hdf5

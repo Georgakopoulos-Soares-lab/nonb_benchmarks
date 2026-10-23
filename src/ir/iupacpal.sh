@@ -1,37 +1,43 @@
 #!/bin/bash
-#SBATCH --job-name=iupacpal
-#SBATCH --array=1-5
-#SBATCH --nodes=1
-#SBATCH --exclusive
-#SBATCH --time=48:00:00
-#SBATCH --partition=gpu-a100
-#SBATCH --account=MCB26029
-#SBATCH --output=logs/ir/iupacpal/run_%a.out
-#SBATCH --error=logs/ir/iupacpal/run_%a.err
 
 set -euo pipefail
 
-RUN=${SLURM_ARRAY_TASK_ID}
+NRUNS=${1:-1}
 
-SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-cd "$SUBMIT_DIR"
+if ! [[ "$NRUNS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Usage: $0 [NRUNS]  (NRUNS must be a positive integer)" >&2
+    exit 1
+fi
 
-FASTA="$(readlink -f data/chr18.fa)"
-IUPACPAL="$(readlink -f src/ir/dependencies/IUPACpal/IUPACpal)"
-OUTDIR="$(readlink -f -m results/ir/iupacpal/run_${RUN})"
-BENCH="$(readlink -f -m benchmarks/ir/iupacpal/run_${RUN}.txt)"
+ROOT="$(pwd)"
 
-mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
+FASTA="$ROOT/data/chr18.fa"
 
-JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-cp "$FASTA" "$JOB_FASTA"
+for RUN in $(seq 1 "$NRUNS"); do
 
-ulimit -c unlimited
+    IUPACPAL="$ROOT/src/ir/dependencies/IUPACpal/IUPACpal"
+    OUTDIR="$ROOT/results/ir/iupacpal/run_${RUN}"
+    OUTFILE="$OUTDIR/perfect.out"
+    BENCH="$ROOT/benchmarks/ir/iupacpal/run_${RUN}.txt"
 
-cd "$OUTDIR"
-/usr/bin/time -v -o "$BENCH" \
-    "$IUPACPAL" \
-    -f "$JOB_FASTA" \
-    -s chr18
+    mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
-rm "$JOB_FASTA"
+    JOB_FASTA="${OUTDIR}/clean_chr18.fa"
+    cp "$FASTA" "$JOB_FASTA"
+
+    ulimit -c unlimited
+
+    cd "$OUTDIR"
+    /usr/bin/time -v -o "$BENCH" \
+        "$IUPACPAL" \
+        -f "$JOB_FASTA" \
+        -s NC_060942.1 \
+        -m 10 \
+        -M 450 \
+        -g 100 \
+        -x 0 \
+        -o "$OUTFILE"
+
+    rm "$JOB_FASTA"
+
+done

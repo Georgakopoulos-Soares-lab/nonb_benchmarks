@@ -18,7 +18,14 @@ output_file <- args[2]
 seqs <- readDNAStringSet(input_file)
 seq <- seqs[[1]]
 
-triplex_res <- triplex.search(seq)
+triplex_res <- triplex.search(
+  seq,
+  min_len = 10,
+  max_len = 30,
+  min_loop = 1,
+  max_loop = 10
+)
+
 triplex_res_gr <- as(triplex_res, "GRanges")
 
 export(
