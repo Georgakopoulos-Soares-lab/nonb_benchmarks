@@ -14,9 +14,9 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/h_dna/triplex/run_${RUN}"
+    OUTDIR="$ROOT/results/h_dna/Triplex/run_${RUN}"
     OUTFILE="$OUTDIR/res.bed"
-    BENCH="$ROOT/benchmarks/h_dna/triplex/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/h_dna/Triplex/run_${RUN}.txt"
     TRIPLEX="$ROOT/src/h_dna/triplex.R"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"

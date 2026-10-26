@@ -15,9 +15,9 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
 
-    OUTDIR="$ROOT/results/g4/g4predict/run_${RUN}"
+    OUTDIR="$ROOT/results/g4/G4predict/run_${RUN}"
     OUTFILE="$OUTDIR/res.bed"
-    BENCH="$ROOT/benchmarks/g4/g4predict/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/g4/G4predict/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

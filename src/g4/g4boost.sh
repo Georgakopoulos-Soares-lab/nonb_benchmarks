@@ -19,8 +19,8 @@ G4BOOST_REGRESSOR="$G4BOOST_DIR/G4Boost_regressor.json"
 
 for RUN in $(seq 1 "$NRUNS"); do
 
-    OUTDIR="$ROOT/results/g4/g4boost/run_${RUN}"
-    BENCH="$ROOT/benchmarks/g4/g4boost/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/g4/G4Boost/run_${RUN}"
+    BENCH="$ROOT/benchmarks/g4/G4Boost/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

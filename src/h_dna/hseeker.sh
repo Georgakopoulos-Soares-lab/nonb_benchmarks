@@ -15,9 +15,9 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
 
-    OUTDIR="$ROOT/results/h_dna/hseeker/run_${RUN}"
+    OUTDIR="$ROOT/results/h_dna/HSeeker/run_${RUN}"
     OUTPREFIX="$OUTDIR/res"
-    BENCH="$ROOT/benchmarks/h_dna/hseeker/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/h_dna/HSeeker/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

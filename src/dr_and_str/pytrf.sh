@@ -14,9 +14,9 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/dr_and_str/pytrf/run_${RUN}"
+    OUTDIR="$ROOT/results/dr_and_str/Pytrf/run_${RUN}"
     OUTFILE="$OUTDIR/res.txt"
-    BENCH="$ROOT/benchmarks/dr_and_str/pytrf/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/dr_and_str/Pytrf/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

@@ -17,8 +17,8 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     MATLABIR="$ROOT/src/ir/findIR.m"
-    OUTDIR="$ROOT/results/ir/findIR/run_${RUN}"
-    BENCH="$ROOT/benchmarks/ir/findIR/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/ir/FindIR/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/FindIR/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

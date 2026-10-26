@@ -16,8 +16,8 @@ FASTA="$ROOT/data/chr18.fa"
 for RUN in $(seq 1 "$NRUNS"); do
 
     IRF="$ROOT/src/ir/dependencies/IRF/bin/irf.exe"
-    OUTDIR="$ROOT/results/ir/irf/run_${RUN}"
-    BENCH="$ROOT/benchmarks/ir/irf/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/ir/IRF/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/IRF/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

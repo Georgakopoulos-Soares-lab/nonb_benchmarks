@@ -15,8 +15,8 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     MREPS="$ROOT/src/dr_and_str/dependencies/mreps/mreps"
-    OUTDIR="$ROOT/results/dr_and_str/mreps/run_${RUN}"
-    BENCH="$ROOT/benchmarks/dr_and_str/mreps/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/dr_and_str/Mreps/run_${RUN}"
+    BENCH="$ROOT/benchmarks/dr_and_str/Mreps/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

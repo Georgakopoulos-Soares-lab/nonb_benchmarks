@@ -14,8 +14,8 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/z_dna/zhunt/run_${RUN}"
-    BENCH="$ROOT/benchmarks/z_dna/zhunt/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/z_dna/Z-Hunt/run_${RUN}"
+    BENCH="$ROOT/benchmarks/z_dna/Z-Hunt/run_${RUN}.txt"
     ZHUNT="$ROOT/src/z_dna/dependencies/zhunt/bin/zhunt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"

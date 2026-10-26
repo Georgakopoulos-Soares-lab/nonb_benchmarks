@@ -17,8 +17,8 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     DETECTIR="$ROOT/src/ir/detectIR.m"
-    OUTDIR="$ROOT/results/ir/detectir/run_${RUN}"
-    BENCH="$ROOT/benchmarks/ir/detectir/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/ir/DetectIR/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/DetectIR/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

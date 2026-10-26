@@ -14,8 +14,8 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/dr_and_str/etandem/run_${RUN}"
-    BENCH="$ROOT/benchmarks/dr_and_str/etandem/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/dr_and_str/Etandem/run_${RUN}"
+    BENCH="$ROOT/benchmarks/dr_and_str/Etandem/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

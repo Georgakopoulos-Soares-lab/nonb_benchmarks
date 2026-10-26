@@ -15,9 +15,9 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     NESSIE="$ROOT/src/ir/dependencies/nessie/nessie"
-    OUTDIR="$ROOT/results/ir/nessie/run_${RUN}"
+    OUTDIR="$ROOT/results/ir/NeSSie/run_${RUN}"
     OUTFILE="$OUTDIR/res.txt"
-    BENCH="$ROOT/benchmarks/ir/nessie/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/ir/NeSSie/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

@@ -14,9 +14,9 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/g4/quadron/run_${RUN}"
+    OUTDIR="$ROOT/results/g4/Quadron/run_${RUN}"
     OUTFILE="$OUTDIR/res.bed"
-    BENCH="$ROOT/benchmarks/g4/quadron/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/g4/Quadron/run_${RUN}.txt"
     QUADRON_LIB="$ROOT/src/g4/dependencies/Quadron/Quadron.lib"
     QUADRON="$ROOT/src/g4/quadron.R"
 

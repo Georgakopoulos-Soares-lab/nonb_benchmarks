@@ -14,8 +14,8 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/g4/g4hunter/run_${RUN}"
-    BENCH="$ROOT/benchmarks/g4/g4hunter/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/g4/G4Hunter/run_${RUN}"
+    BENCH="$ROOT/benchmarks/g4/G4Hunter/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

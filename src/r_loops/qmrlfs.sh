@@ -16,9 +16,9 @@ FASTA="$ROOT/data/chr18.fa"
 for RUN in $(seq 1 "$NRUNS"); do
 
     QMRLFS_FINDER="$ROOT/src/r_loops/dependencies/QmRLFS-finder/QmRLFS-finder.py"
-    OUTDIR="$ROOT/results/r_loops/qmrlfs_finder/run_${RUN}"
-    OUTFILE="$OUTDIR/resσ"
-    BENCH="$ROOT/benchmarks/r_loops/qmrlfs_finder/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/r_loops/QmRLFS-finder/run_${RUN}"
+    OUTFILE="$OUTDIR/res"
+    BENCH="$ROOT/benchmarks/r_loops/QmRLFS-finder/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

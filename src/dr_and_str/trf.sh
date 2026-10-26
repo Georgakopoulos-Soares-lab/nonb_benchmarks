@@ -14,8 +14,8 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/dr_and_str/trf/run_${RUN}"
-    BENCH="$ROOT/benchmarks/dr_and_str/trf/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/dr_and_str/TRF/run_${RUN}"
+    BENCH="$ROOT/benchmarks/dr_and_str/TRF/run_${RUN}.txt"
     TRF="$ROOT/src/dr_and_str/dependencies/TRF/build/src/trf"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
@@ -33,6 +33,7 @@ for RUN in $(seq 1 "$NRUNS"); do
         2 7 7 80 10 24 6 \
         -f \
         -h \
+        -d \
         -ngs
 
     rm "$JOB_FASTA"

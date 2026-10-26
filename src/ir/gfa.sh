@@ -15,8 +15,8 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     GFA="$ROOT/src/general/non-B_gfa/gfa"
-    OUTDIR="$ROOT/results/ir/gfa/run_${RUN}"
-    BENCH="$ROOT/benchmarks/ir/gfa/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/ir/Non-B GFA IR/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/Non-B GFA IR/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

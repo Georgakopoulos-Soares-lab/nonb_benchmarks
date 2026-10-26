@@ -16,9 +16,9 @@ FASTA="$ROOT/data/chr18.fa"
 for RUN in $(seq 1 "$NRUNS"); do
 
     IUPACPAL="$ROOT/src/ir/dependencies/IUPACpal/IUPACpal"
-    OUTDIR="$ROOT/results/ir/iupacpal/run_${RUN}"
+    OUTDIR="$ROOT/results/ir/IUPACpal/run_${RUN}"
     OUTFILE="$OUTDIR/perfect.out"
-    BENCH="$ROOT/benchmarks/ir/iupacpal/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/ir/IUPACpal/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

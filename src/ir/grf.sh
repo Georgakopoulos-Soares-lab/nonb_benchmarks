@@ -15,8 +15,8 @@ FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
     GRF="$ROOT/src/ir/dependencies/GenericRepeatFinder/bin/grf-main"
-    OUTDIR="$ROOT/results/ir/grf/run_${RUN}"
-    BENCH="$ROOT/benchmarks/ir/grf/run_${RUN}.txt"
+    OUTDIR="$ROOT/results/ir/GRF/run_${RUN}"
+    BENCH="$ROOT/benchmarks/ir/GRF/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

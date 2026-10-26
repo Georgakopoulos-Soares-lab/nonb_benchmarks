@@ -14,9 +14,9 @@ G4_IMGRINDER="src/g4/g4_imgrinder.R"
 
 for RUN in $(seq 1 "$NRUNS"); do
 
-    OUTDIR="results/g4/g4_imgrinder/run_${RUN}"
+    OUTDIR="results/g4/G4-iM Grinder/run_${RUN}"
     OUTFILE="$OUTDIR/res.csv"
-    BENCH="benchmarks/g4/g4_imgrinder/run_${RUN}.txt"
+    BENCH="benchmarks/g4/G4-iM Grinder/run_${RUN}.txt"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 

@@ -14,9 +14,9 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 for RUN in $(seq 1 "$NRUNS"); do
 
-    OUTDIR="$ROOT/results/g4/qgrs_mapper/run_${RUN}"
+    OUTDIR="$ROOT/results/g4/QGRS Mapper/run_${RUN}"
     OUTFILE="$OUTDIR/res.csv"
-    BENCH="$ROOT/benchmarks/g4/qgrs_mapper/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/g4/QGRS Mapper/run_${RUN}.txt"
     QGRSMAPPER="$ROOT/src/g4/dependencies/qgrs-cpp/qgrs"
 
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"

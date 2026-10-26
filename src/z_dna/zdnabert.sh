@@ -14,9 +14,9 @@ ROOT="$(pwd)"
 FASTA="$ROOT/data/chr18.fa"
 
 for RUN in $(seq 1 "$NRUNS"); do
-    OUTDIR="$ROOT/results/z_dna/zdnabert/run_${RUN}"
+    OUTDIR="$ROOT/results/z_dna/ZDNABERT/run_${RUN}"
     OUTFILE="$OUTDIR/res.txt"
-    BENCH="$ROOT/benchmarks/z_dna/zdnabert/run_${RUN}.txt"
+    BENCH="$ROOT/benchmarks/z_dna/ZDNABERT/run_${RUN}.txt"
     ZDNABERT="$ROOT/src/z_dna/zdnabert.py"
 
     DEPENDENCY_DIR="$ROOT/src/z_dna/dependencies"
