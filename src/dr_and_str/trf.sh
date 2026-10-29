@@ -34,11 +34,7 @@ for RUN in $(seq 1 "$NRUNS"); do
         -f \
         -h \
         -d \
-        -ngs
+        -m
 
     rm "$JOB_FASTA"
 done
-
- -d \
-    -m \
-    -h

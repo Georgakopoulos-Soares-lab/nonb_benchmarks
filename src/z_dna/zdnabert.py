@@ -38,11 +38,12 @@ args = parser.parse_args()
 model_confidence_threshold = 0.5
 minimum_sequence_length = 10
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 tokenizer = BertTokenizer.from_pretrained(args.model_dir)
 model = BertForTokenClassification.from_pretrained(args.model_dir)
-model.cuda()
+model.to(device)
 model.eval()
-
 out = []
 
 print(args.input_fasta)
@@ -57,7 +58,7 @@ for seq_record in SeqIO.parse(args.input_fasta, 'fasta'):
         preds = []
         for seq_piece in tqdm(seq_pieces):
             input_ids = torch.LongTensor(tokenizer.encode(' '.join(seq_piece), add_special_tokens=False))
-            outputs = torch.softmax(model(input_ids.cuda().unsqueeze(0))[-1],axis = -1)[0,:,1]
+            outputs = torch.softmax(model(input_ids.to(device).unsqueeze(0))[-1], axis=-1)[0, :, 1]
             preds.append(outputs.cpu().numpy())
     result_dict[seq_record.name] = stitch_np_seq(preds)
 

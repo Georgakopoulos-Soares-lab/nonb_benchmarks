@@ -24,7 +24,7 @@ for RUN in $(seq 1 "$NRUNS"); do
     mkdir -p "$OUTDIR" "$(dirname "$BENCH")"
 
     JOB_FASTA="${OUTDIR}/clean_chr18.fa"
-    cp "$FASTA" "$JOB_FASTA"
+    awk '/^>/ {print; next} {print toupper($0)}' "$FASTA" > "$JOB_FASTA"
 
     cd "$OUTDIR"
     /usr/bin/time -v -o "$BENCH" \

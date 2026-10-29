@@ -229,9 +229,13 @@ config.yaml
 src/z_dna/dependencies
 src/h_dna/dependencies
 src/ir/dependencies
+src/ir/missing_jobs.sh
+src/z_dna/missing_jobs.sh
+src/general/non-B_GFA
 src/dr_and_str/dependencies
 src/r_loops/dependencies
 src/g4/dependencies
 src/general/non-B_gfa
 src/plots.ipynb
 res_intersection.ipynb
+archive.tar.gz

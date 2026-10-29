@@ -31,7 +31,7 @@ res <- G4iMGrinder(
   MaxRunSize = 4,
   MinLoopSize = 1,
   MaxLoopSize = 9,
-  MinNRuns = 0,
+  MinNRuns = 4,
   MaxNRuns = 4
 )
 
