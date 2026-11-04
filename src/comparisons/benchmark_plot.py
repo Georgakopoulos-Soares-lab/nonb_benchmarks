@@ -1,5 +1,5 @@
-import pandas as pd
-import seaborn as sns
+import pandas as pd 
+import seaborn as sns 
 import matplotlib.pyplot as plt
 from pathlib import Path
 
@@ -22,13 +22,18 @@ def read_benchmark(benchmark_path):
 
 rows = []
 for nonb_dir in (benchmarks).iterdir():
+    if nonb_dir.name == ".DS_Store":
+        continue
     for tool_dir in nonb_dir.iterdir():
+        if tool_dir.name == ".DS_Store":
+            continue
         for iteration in tool_dir.iterdir():
+            if iteration.name == ".DS_Store":
+                continue
             time, memory = read_benchmark(iteration)
             rows.append({
                 "nonb": nonb_dir.name,
                 "tool": tool_dir.name,
-                "iteration": iteration.stem,
                 "time": time,
                 "memory": memory,
             })
@@ -45,34 +50,9 @@ nonb_dict = {
     "general": "General prediction"
 }
 
-tool_dict = {
-    "zseeker": "ZSeeker",
-    "zhunt": "Z-Hunt",
-    "pqsfinder": "Pqsfinder",
-    "triplex": "Triplex",
-    "irf": "IRF",
-    "detectir": "detectIR",
-    "matlabir": "MATLAB-based IR tool",
-    "trf": "TRF",
-    "mreps": "Mreps",
-    "qmrlfs_finder": "QmRLFS-Finder",
-    "hseeker": "HSeeker",
-    "gfa": "Non-B GFA",
-    "g4hunter": "G4Hunter",
-    "einverted": "Einverted",
-    "etandem": "Etandem",
-    "grf": "GRF",
-    "g4boost": "G4Boost",
-    "quadron": "Quadron",
-    "triplexator": "Triplexator",
-    "zdnabert": "Z-DNABERT"
-}
-
 benchmarks_res["nonb"] = benchmarks_res["nonb"].map(nonb_dict)
-benchmarks_res["tool"] = benchmarks_res["tool"].map(tool_dict)
 
 nonb_palette = {
-    "General prediction": "#9A9898",
     "DRs & STRs": "#5B4289",
     "G4s": "#798CB1",
     "H-DNA": "#95B4C2",
@@ -92,7 +72,7 @@ tool_order = (
     ["tool"].tolist()
 )
 
-fig, axes = plt.subplots(1, 2, figsize = (8, 4), sharey = True, layout = "constrained")
+fig, axes = plt.subplots(1, 2, figsize = (8, 6), sharey = True, layout = "constrained")
 
 common = dict(
     data=benchmarks_res,
@@ -110,11 +90,12 @@ common = dict(
 
 sns.barplot(x = "time", ax = axes[0], **common)
 axes[0].set_xscale("log")
-axes[0].set_xlabel(r"Time ($\log_{10}$ seconds)")
-axes[0].set_ylabel("Non-B DNA detection algorithm")
+axes[0].set_xlabel(r"Time (log$_{10}$ seconds")
+axes[0].set_ylabel("Non-B DNA prediction algorithm")
 
 sns.barplot(x = "memory", ax = axes[1], legend = False, **common)
-axes[1].set_xlabel("Peak memory usage (GB)")
+axes[1].set_xlabel(r"Peak memory usage (log$_{10}$ GB)")
+axes[1].set_xscale("log")
 axes[1].set_ylabel("")
 
 for ax in axes:
@@ -136,4 +117,23 @@ sns.despine()
 fig.savefig(
     plots / "benchmark_plot.pdf",
     transparent = True
+)
+
+benchmarks_res = benchmarks_res.rename(
+    columns={
+        "nonb": "Non-B DNA class",
+        "tool": "Tool",
+        "time": "Time (seconds)",
+        "memory": "Peak memory (GB)"
+    }
+)
+
+benchmarks_res['Time (hours)'] = benchmarks_res['Time (seconds)'] / 3600
+benchmarks_res['Time (hours)'] = round(benchmarks_res['Time (hours)'], 2)
+benchmarks_res['Time (seconds)'] = round(benchmarks_res['Time (seconds)'], 2)
+benchmarks_res['Peak memory (GB)'] = round(benchmarks_res['Peak memory (GB)'], 2)
+
+benchmarks_res.to_csv(
+    base_dir / "results" / 'performance_benchmarks.csv',
+    index=False
 )

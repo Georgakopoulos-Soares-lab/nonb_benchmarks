@@ -227,6 +227,8 @@ tmp_results/
 config.yaml
 *.snakemake
 src/z_dna/dependencies
+src/comparisons/test.ipynb
+src/comparisons/plots.ipynb
 src/h_dna/dependencies
 src/ir/dependencies
 src/ir/missing_jobs.sh
@@ -239,3 +241,13 @@ src/general/non-B_gfa
 src/plots.ipynb
 res_intersection.ipynb
 archive.tar.gz
+performance_benchmarks.xlsx
+concordance_results.xlsx
+benchmarks_nonb.ai
+benchmarks_nonb_Figure_1.png
+benchmarks_nonb_Figure_2.png
+*.tmp
+*.png
+submission_docs/
+logfile.txt
+.vscode/
