@@ -1,24 +1,30 @@
 # Z-DNA
 
-Tools benchmarked here detect Z-DNA forming sequences.
+This category covers tools that detect Z-DNA forming sequences.
+
+Cloned tools and model files go in `src/z_dna/dependencies/` (git-ignored). Run
+the install commands below from that directory:
+
+```
+mkdir -p src/z_dna/dependencies
+cd src/z_dna/dependencies
+```
 
 ## Tools
 
 ### ZSeeker
 
-From https://github.com/Georgakopoulos-Soares-lab/ZSeeker
+https://github.com/Georgakopoulos-Soares-lab/ZSeeker. It needs Python 3.11.
 
 ```
-# python 3.11
 pip install ZSeeker
 ```
 
-Run: `sbatch src/z_dna/zseeker.sh`. Invokes
-`ZSeeker --fasta <fasta> --n_jobs 1 --output_dir <dir>`.
+Script: `zseeker.sh`, which runs `ZSeeker --fasta <fasta> --n_jobs 1 --output_dir <dir>`.
 
-### Z-HUNT (zhunt)
+### Z-Hunt
 
-From https://github.com/Ho-Lab-Colostate/zhunt
+https://github.com/Ho-Lab-Colostate/zhunt
 
 ```
 git clone https://github.com/Ho-Lab-Colostate/zhunt
@@ -26,79 +32,64 @@ cd zhunt
 gcc -O2 -o bin/zhunt zhun3.c -lm
 ```
 
-Expected at `src/z_dna/dependencies/zhunt/bin/zhunt`.
+Binary: `dependencies/zhunt/bin/zhunt`.
+Script: `zhunt.sh`. It strips the FASTA header and newlines into a single-line
+sequence file and then runs `zhunt 12 6 12 <sequence>`.
 
-Run: `sbatch src/z_dna/zhunt.sh`. The script strips FASTA headers/newlines into
-a single-line sequence file before running
-`zhunt 12 6 12 <linearized_fasta>`.
+### ZDNABERT
 
-### Z-DNABERT
-
-Code from
-https://github.com/mitiau/Z-DNABERT/blob/main/ZDNA-prediction.ipynb
+The inference code in `src/z_dna/zdnabert.py` is adapted from
+https://github.com/mitiau/Z-DNABERT/blob/main/ZDNA-prediction.ipynb.
 
 ```
 pip install transformers biopython gdown scipy
 pip install torch --index-url https://download.pytorch.org/whl/cu126
 ```
 
-Download the model checkpoints (one directory per training condition):
+Download the tokenizer/config files and model checkpoints into
+`dependencies/Z-DNABERT/`:
 
 ```
-gdown 1VAsp8I904y_J0PUhAQqpSlCn1IqfG0FB --output models/HG_chipseq/
-gdown 1dAeAt5Gu2cadwDhbc7OnenUgDLHlUvkx --output models/HG_kouzine/
-gdown 1W6GEgHNoitlB-xXJbLJ_jDW4BF35W1Sd --output models/MM_curax/
-gdown 1dXpQFmheClKXIEoqcZ7kgCwx6hzVCv3H --output models/MM_kouzine/
+mkdir -p Z-DNABERT && cd Z-DNABERT
 
+# config.json, special_tokens_map.json, tokenizer_config.json, vocab.txt
 gdown 10sF8Ywktd96HqAL0CwvlZZUUGj05CGk5
 gdown 16bT7HDv71aRwyh3gBUbKwign1mtyLD2d
 gdown 1EE9goZ2JRSD8UTx501q71lGCk-CK3kqG
 gdown 1gZZdtAoDnDiLQqjQfGyuwt268Pe5sXW0
+
+# model checkpoints (one per training set); the benchmark uses HG_kouzine
+gdown 1dAeAt5Gu2cadwDhbc7OnenUgDLHlUvkx --output models/HG_kouzine/
+gdown 1VAsp8I904y_J0PUhAQqpSlCn1IqfG0FB --output models/HG_chipseq/
+gdown 1W6GEgHNoitlB-xXJbLJ_jDW4BF35W1Sd --output models/MM_curax/
+gdown 1dXpQFmheClKXIEoqcZ7kgCwx6hzVCv3H --output models/MM_kouzine/
 ```
 
-Run: `sbatch src/z_dna/zdnabert.sh` (GPU partition). Assembles a model
-directory from `src/z_dna/dependencies/Z-DNABERT/` (config, tokenizer,
-vocab, and the `HG_chipseq` checkpoint) and runs
-`python src/z_dna/zdnabert.py <model_dir> <fasta> <output.txt>`, which tokenizes
-the sequence into 6-mers, runs it through `BertForTokenClassification` on GPU,
-and reports Z-DNA candidate regions above a 0.5 confidence threshold.
+Script: `zdnabert.sh`. It copies the config, tokenizer, vocab and
+`models/HG_kouzine/pytorch_model.bin` into a per-run model directory. It then runs
+`python src/z_dna/zdnabert.py <model_dir> <fasta> res.txt`, which tokenizes the
+sequence into 6-mers, runs `BertForTokenClassification` and reports regions above
+a 0.5 confidence threshold. ZDNABERT is slow on CPU. `missing_jobs.sh` runs the
+same loop under SBATCH headers (edit `--partition`/`--account` first) and is
+submitted with `sbatch src/z_dna/missing_jobs.sh [NRUNS]`.
 
-### Z-GENIE
+### Non-B GFA (Z-DNA mode)
 
-From https://github.com/agarzare/Z-GENIE
+Build non-B GFA once under `src/general/` (see
+[src/general/README.md](../general/README.md)).
 
-```
-git clone https://github.com/agarzare/Z-GENIE.git
-install.packages("devtools")
-devtools::install("ZGENIE")
-```
-
-Vendored under `src/z_dna/dependencies/Z-GENIE`; not yet wired up to a
-benchmark script.
-
-### DeepZ
-
-```
-git clone https://github.com/Nazar1997/DeepZ_data_creation
-```
-
-Vendored under `src/z_dna/dependencies/DeepZ_data_creation`; not yet wired up
-to a benchmark script.
+Script: `gfa.sh`, which runs `gfa -seq <fasta> -out gfa_out` with every structure type
+except Z-DNA skipped.
 
 ## Running the benchmarks
 
-Submit `sbatch src/z_dna/<tool>.sh` from the repository root (`zseeker`,
-`zhunt`, `zdnabert`). Each script is a 5-task job array that runs the tool once
-on `data/chr18.fa` per task, timed with `/usr/bin/time -v`. `zdnabert` is
-submitted to a GPU partition; the others to CPU.
+Run from the repository root with the right env active. `NRUNS` is optional and
+defaults to 1:
 
-Output/timing/log paths are not fully consistent between scripts:
-- `zdnabert.sh` follows the repo-wide convention:
-  `results/z_dna/zdnabert/run_<N>/`, `benchmarks/z_dna/zdnabert/run_<N>.txt`,
-  `logs/z_dna/zdnabert/run_<N>.{out,err}`.
-- `zseeker.sh` and `zhunt.sh` write results/benchmarks under `z_dna` but SLURM
-  logs under `zdna` (no underscore) — e.g. `zhunt.sh` uses
-  `results/zdna/zhunt/run_<N>/` and `benchmarks/zdna/zhunt/run_<N>.txt`, but
-  `logs/zdna/zhunt/run_<N>.{out,err}`. Since only `logs/z_dna/` exists at the
-  top level, submitting these two as-is will fail unless `logs/zdna/<tool>/` is
-  created first (or the scripts are fixed to use `z_dna` consistently).
+```
+bash src/z_dna/<zseeker|zhunt|zdnabert|gfa>.sh [NRUNS]
+```
+
+Output goes to `results/z_dna/<Tool>/run_<N>/` and the `/usr/bin/time -v` report
+to `benchmarks/z_dna/<Tool>/run_<N>.txt`. `<Tool>` is one of `ZSeeker`,
+`Z-Hunt`, `ZDNABERT`, `Non-B GFA Z-DNA`.

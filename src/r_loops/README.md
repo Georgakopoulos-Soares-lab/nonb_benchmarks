@@ -1,55 +1,67 @@
 # R-loops
 
-Tools benchmarked here detect R-loop forming sequences (RLFS).
+This category covers tools that detect R-loop forming sequences (RLFS).
+
+Cloned tools go in `src/r_loops/dependencies/` (git-ignored). Run the install
+commands below from that directory:
+
+```
+mkdir -p src/r_loops/dependencies
+cd src/r_loops/dependencies
+```
 
 ## Tools
 
 ### QmRLFS-finder
 
-From https://github.com/piroonj/QmRLFS-finder
+https://github.com/piroonj/QmRLFS-finder. It needs Biopython.
 
 ```
 git clone https://github.com/piroonj/QmRLFS-finder
 ```
 
-Requires Biopython 1.64 and Python.
+Script: `qmrlfs.sh`. It runs `dependencies/QmRLFS-finder/QmRLFS-finder.py
+--infile <fasta> --outfile res -bed`.
 
-Run: `sbatch src/r_loops/qmrlfs.sh`. Invokes
-`python QmRLFS-finder.py -i <fasta> -o res.tsv`.
+### DeepER
 
-## Running the benchmarks
+https://github.com/NjuChenlab/DeepER
 
-Submit `sbatch src/r_loops/qmrlfs.sh` from the repository root. It's a 5-task
-job array that runs QmRLFS-finder once on `data/chr18.fa` per task, timed with
-`/usr/bin/time -v`. Output goes to
-`results/r_loops/qmrlfs_finder/run_<N>/`, timing to
-`benchmarks/r_loops/qmrlfs_finder/run_<N>.txt`, and SLURM logs to
-`logs/r_loops/qmrlfs_finder/run_<N>.{out,err}`.
-
-DeepER
+```
 git clone https://github.com/NjuChenlab/DeepER
-pip install torch numpy 
+pip install torch numpy
+```
 
+The trained model `DeepER-deploy/DeepER.pkl` comes with the repo.
+Script: `DeepER.sh`. It upper-cases the FASTA (DeepER rejects soft-masked bases) and
+then runs `DeepER-deploy/Script.py <fasta> DeepER.pkl forward res.txt 1`.
 
-SkewR
-conda install -c bioconda -c conda-forge bedtools "perl>=5.18" ucsc-bigbedtobed
-git clone https://github.com/KorfLab/StochHMM.git
-cd StochHMM
-./configure
-make
-cp stochhmm "$CONDA_PREFIX/bin/"
+### deepRloopPre
 
-git clone https://github.com/srhartono/SkewR
+https://github.com/PEHGP/deepRloopPre. Use mamba rather than conda here, because
+conda stalls when updating the env.
 
-
-deepRloopPre
-
-We recommend mamba for this since conda stalled to update the env
-
+```
 git clone https://github.com/PEHGP/deepRloopPre
 cd deepRloopPre
 mamba env update -f ml.yaml
 python setup.py install
-
-download the pretrained human model from http://bioinfor.kib.ac.cn/R-loopAtlas/deepRloopPre/model/hela_classification.hdf5
 wget http://bioinfor.kib.ac.cn/R-loopAtlas/deepRloopPre/model/hela_classification.hdf5
+```
+
+Model: `dependencies/deepRloopPre/hela_classification.hdf5` (pretrained on human
+HeLa).
+Script: `deeprlooppre.sh`. It runs `bin/deepRloopPredict.py --h5 hela_classification.hdf5 --fasta <fasta> --prefix res`.
+
+## Running the benchmarks
+
+Run from the repository root with the env each tool was installed into active.
+`NRUNS` is optional and defaults to 1:
+
+```
+bash src/r_loops/<qmrlfs|DeepER|deeprlooppre>.sh [NRUNS]
+```
+
+Output goes to `results/r_loops/<Tool>/run_<N>/` and the `/usr/bin/time -v`
+report to `benchmarks/r_loops/<Tool>/run_<N>.txt`. `<Tool>` is one of
+`QmRLFS-finder`, `DeepER`, `deepRloopPre`.

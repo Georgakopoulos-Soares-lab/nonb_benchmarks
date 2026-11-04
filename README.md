@@ -2,38 +2,52 @@
 
 Benchmarking suite for non-B DNA structure detection algorithms. Each tool is run
 on chromosome 18 of the T2T-CHM13v2.0 human genome assembly and timed with
-`/usr/bin/time -v` so that runtime and peak memory can be compared across methods.
+`/usr/bin/time -v`, so runtime and peak memory can be compared across methods.
+The predicted structures are then compared across tools within each category.
 
-## Structure categories
+## Structure categories and tools
 
-Each non-B DNA structure family lives in its own directory under `src/`, with its
-own README covering the specific tools, install steps, and run instructions:
+Each non-B DNA structure family has its own directory under `src/`. Each one has
+a README with that category's install steps and run instructions:
 
-| Category | Structure | README |
-|---|---|---|
-| `dr_and_str` | Direct repeats / short tandem repeats | [src/dr_and_str/README.md](src/dr_and_str/README.md) |
-| `g4` | G-quadruplexes | [src/g4/README.md](src/g4/README.md) |
-| `general` | General repeat finders (TIRs, EMBOSS tools, non-B GFA) | [src/general/README.md](src/general/README.md) |
-| `h_dna` | H-DNA / triplexes | [src/h_dna/README.md](src/h_dna/README.md) |
-| `ir` | Inverted repeats / hairpins | [src/ir/README.md](src/ir/README.md) |
-| `r_loops` | R-loops | [src/r_loops/README.md](src/r_loops/README.md) |
-| `z_dna` | Z-DNA | [src/z_dna/README.md](src/z_dna/README.md) |
+| Category | Structure | Tools | README |
+|---|---|---|---|
+| `dr_and_str` | Direct repeats / short tandem repeats | Dot2dot, Etandem, Mreps, Non-B GFA STR, PERF, Pytrf, TRF, ULTRA | [src/dr_and_str/README.md](src/dr_and_str/README.md) |
+| `g4` | G-quadruplexes | G4Boost, G4Catchall, G4Hunter, G4-iM Grinder, G4mismatch, G4predict, ImGQfinder, Non-B GFA G4, Pqsfinder, QGRS Mapper, QPARSE, Quadparser, Quadron | [src/g4/README.md](src/g4/README.md) |
+| `h_dna` | H-DNA / triplexes | HSeeker, Triplex | [src/h_dna/README.md](src/h_dna/README.md) |
+| `ir` | Inverted repeats / hairpins | DetectIR, Einverted, FindIR, GRF, IRF, IUPACpal, NeSSie, Non-B GFA IR | [src/ir/README.md](src/ir/README.md) |
+| `r_loops` | R-loops | DeepER, deepRloopPre, QmRLFS-finder | [src/r_loops/README.md](src/r_loops/README.md) |
+| `z_dna` | Z-DNA | Non-B GFA Z-DNA, ZDNABERT, Z-Hunt, ZSeeker | [src/z_dna/README.md](src/z_dna/README.md) |
+
+[src/general/](src/general/README.md) holds non-B GFA, which is shared across
+categories: its G4, Z-DNA, STR and IR modes are each benchmarked in the matching
+category.
 
 ## Repository layout
 
 ```
-data/         reference FASTA(s) used for benchmarking (downloaded, not checked in)
-src/<cat>/    sbatch scripts + wrapper scripts for each tool, plus dependencies/
-              (vendored/cloned tool source, built locally)
-results/      per-run tool output (BED/TSV/FASTA/etc.), one dir per run
-benchmarks/   per-run `/usr/bin/time -v` output (wall clock, peak RSS, ...)
-logs/         per-run SLURM stdout/stderr
-src/plots.ipynb  aggregates results/benchmarks into results/plots/
+data/              reference FASTA (downloaded, not checked in)
+src/<cat>/         one run script per tool (<tool>.sh, plus R/Python/MATLAB
+                   wrappers where needed) and dependencies/ (cloned and built
+                   tool source, not checked in)
+src/general/       shared tools (non-B GFA)
+src/comparisons/   runtime/memory plot and per-category overlap plots
+src/download_data.sh
+results/           tool output, one directory per run; results/plots/ for figures
+benchmarks/        `/usr/bin/time -v` output for each run
+logs/              SLURM stdout/stderr for long jobs submitted with sbatch
 ```
 
-Within a category, results/benchmarks/logs follow the same pattern:
-`results/<cat>/<tool>/run_<N>/`, `benchmarks/<cat>/<tool>/run_<N>.txt`,
-`logs/<cat>/<tool>/run_<N>.{out,err}`, where `<N>` is the SLURM array task ID.
+`data/`, `results/`, `benchmarks/`, `logs/` and every `dependencies/` directory
+are git-ignored.
+
+Output paths follow one pattern, where `<Tool>` is the tool's display name
+(e.g. `G4Hunter`, `Non-B GFA Z-DNA`) and `<N>` is the run number:
+
+```
+results/<cat>/<Tool>/run_<N>/
+benchmarks/<cat>/<Tool>/run_<N>.txt
+```
 
 ## Setup
 
@@ -41,27 +55,50 @@ Within a category, results/benchmarks/logs follow the same pattern:
 conda activate nonb-tools   # python 3.10
 ```
 
-Each tool has its own additional dependencies (R packages, other conda envs,
-compiled binaries, Python packages). See the category READMEs linked above.
+Each tool also needs its own dependencies (R packages, other conda envs,
+compiled binaries, MATLAB, Python packages). The category READMEs linked above
+list them.
 
-Download and prepare the reference data (T2T-CHM13v2.0, chromosome 18 only):
-
-```
-bash src/download_data.sh
-```
-
-## Reproducing a benchmark
-
-From the repository root, submit the sbatch script for the tool you want to run,
-e.g.:
+Download the reference data (T2T-CHM13v2.0 from NCBI) and extract chromosome 18
+(`NC_060942.1`) to `data/chr18.fa`. The script uses a relative path, so run it
+from `src/`:
 
 ```
-sbatch src/z_dna/zseeker.sh
+cd src
+bash download_data.sh
+cd ..
 ```
 
-Each script is a SLURM job array (`run_1` .. `run_5`) that runs the tool once per
-array task on `data/chr18.fa`, wrapped in `/usr/bin/time -v` for timing.
+This requires `wget` and `samtools`.
 
-The `--partition` and `--account` values in the SBATCH headers are specific to
-the cluster this was developed on (TACC) — edit them for your own allocation
-before submitting.
+## Running a benchmark
+
+From the repository root, run the script for a tool, optionally giving the
+number of runs (default 1):
+
+```
+bash src/z_dna/zseeker.sh        # one run
+bash src/g4/g4hunter.sh 5        # five runs: run_1 .. run_5
+```
+
+For each run, the script copies `data/chr18.fa` into the run's results directory
+and runs the tool on that copy under `/usr/bin/time -v`. It then deletes the copy.
+
+Scripts must be launched from the repository root because they resolve every path
+against `$(pwd)`.
+
+## Comparisons and plots
+
+The scripts in `src/comparisons/` read from `results/` and `benchmarks/` and
+write PDFs to `results/plots/`. They use paths relative to their own directory,
+so run them from there:
+
+```
+cd src/comparisons
+python benchmark_plot.py     # runtime (user time) and peak memory for all tools
+python g4_upset.py           # G4 overlap (UpSet)
+python z_dna_venn.py         # Z-DNA overlap (Venn)
+python ir_venn.py            # IR overlap (Venn)
+python dr_and_str_venn.py    # DR/STR overlap (Venn)
+python h_dna_euler.py        # H-DNA overlap (Euler)
+```

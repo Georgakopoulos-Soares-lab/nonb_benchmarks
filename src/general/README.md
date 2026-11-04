@@ -1,70 +1,27 @@
-# General repeat / non-B structure finders
+# Shared tools
 
-Tools benchmarked here aren't specific to a single non-B DNA structure family —
-general repeat finders and the EMBOSS repeat-finding tools.
+## Non-B GFA
 
-## Tools
+https://github.com/abcsFrederick/non-B_gfa
 
-### GenericRepeatFinder (GRF)
+Non-B GFA finds several non-B structure types in one pass. It is benchmarked separately in each
+category. Each category's `gfa.sh` turns off every structure type except its own
+with `-skip*` flags:
 
-Get the latest version from https://github.com/bioinfolabmu/GenericRepeatFinder
+| Script | Mode | Results directory |
+|---|---|---|
+| `src/g4/gfa.sh` | G4 | `Non-B GFA G4` |
+| `src/z_dna/gfa.sh` | Z-DNA | `Non-B GFA Z-DNA` |
+| `src/ir/gfa.sh` | IR | `Non-B GFA IR` |
+| `src/dr_and_str/gfa.sh` | STR | `Non-B GFA STR` |
 
-```
-git clone https://github.com/bioinfolabmu/GenericRepeatFinder
-cd GenericRepeatFinder-1.0.2/src
-make
-```
-
-Binary is `GenericRepeatFinder-1.0.2/src/grf-main/grf-main`.
-
-Run: `sbatch src/general/grf.sh`. Runs TIR detection:
-`grf-main -i <fasta> -c 0 -o <outdir> --min_tr 10 -t 1`.
-
-### non-B GFA (nonb-gfa)
+Build it once here (the directory is git-ignored):
 
 ```
+cd src/general
 git clone https://github.com/abcsFrederick/non-B_gfa
-cd non-B_gfa/
+cd non-B_gfa
 make
 ```
 
-Binary is `non-B_gfa/gfa`.
-
-Run: `sbatch src/general/gfa.sh`. Invokes
-`gfa -seq <fasta> -out gfa_out -skipAPR`.
-
-### EMBOSS (etandem, einverted)
-
-```
-conda install -c conda-forge -c bioconda emboss
-```
-
-- `etandem` — run: `sbatch src/general/etandem.sh`. Invokes
-  `etandem -sequence <fasta> -minrepeat 10 -maxrepeat 10 -outfile res.etandem`.
-- `einverted` — run: `sbatch src/general/einverted.sh`. Invokes
-  `einverted -sequence <fasta> -gap 12 -threshold 50 -match 3 -mismatch -4
-  -outfile res.einverted -outseq res.inv.fa`.
-
-## Running the benchmarks
-
-Submit `sbatch src/general/<tool>.sh` from the repository root (`grf`, `gfa`,
-`etandem`, `einverted`). Each script is a 5-task job array that runs the tool
-once on `data/chr18.fa` per task, timed with `/usr/bin/time -v`. Output goes to
-`results/general/<tool>/run_<N>/`, timing to
-`benchmarks/general/<tool>/run_<N>.txt`, and SLURM logs to
-`logs/general/<tool>/run_<N>.{out,err}` (the `gfa` job itself is named
-`nonB_gfa` in its SLURM logs).
-
-
-RepEx
-git clone https://github.com/sdanthinne/RepEx
-cd RepEx
-mkdir -p src/bin
-
-make install
-
-
-NeSSie
-git clone https://github.com/B3rse/nessie
-cd nessie
-make
+All four scripts use the binary at `src/general/non-B_gfa/gfa`.
